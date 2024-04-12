@@ -32,5 +32,4 @@ app.use((error, req, res, next) => {
   return res.status(statusCode).json({ message: msg });
 });
 
-
 app.listen(process.env.PORT);

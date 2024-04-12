@@ -1,51 +1,69 @@
 const { StatusCodes } = require('http-status-codes');
 const mariadb = require('../db/mariadb');
+const CustomError = require('../util/CustomError');
+
+//(카테고리 별, 신간) 전체 도서 목록 조회
 const getAllBooks = (req, res, next) => {
-  let { category_id } = req.query;
-  //기본 도서 전체 조회
+  const { category_id, newBooks, curPage, pageSize } = req.query;
+
   let sql = `SELECT * FROM books`;
-  let value = [];
-  //카테고리 쿼리로 조회가 들어온 경우
+  const values = [];
+  const conditions = [];
+
   if (category_id) {
-    sql = `SELECT books.id, books.title, books.img, categories.name AS category, books.isbn, books.summary, books.detail, books.author, books.pages, books.contents, books.price, books.pub_date
-    FROM books
-    LEFT JOIN  categories
-    ON books.category_id = categories.id
-    WHERE categories.id = ?`;
-    value = [Number(category_id)];
+    conditions.push(`category_id = ?`);
+    values.push(Number(category_id));
   }
-  mariadb.query(sql, value, (error, results) => {
+  if (newBooks) {
+    conditions.push(
+      `pub_date BETWEEN DATE_SUB(NOW(),INTERVAL 30 DAY) AND NOW()`
+    );
+  }
+  //sql 합치기
+  if (conditions.length) {
+    sql += ` WHERE ${conditions.join(' AND ')}`;
+  }
+
+  if (curPage && pageSize) {
+    sql += ` LIMIT ?, ?`;
+    const limit = Number(pageSize);
+    const offset = limit * (Number(curPage) - 1);
+    values.push(offset);
+    values.push(limit);
+  }
+
+  // console.log(sql, values);
+
+  mariadb.query(sql, values, (error, results) => {
     if (error) {
-      const errorObj = new Error('sql 오류');
-      errorObj.statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
-      return next(errorObj);
+      return next(
+        CustomError('sql 오류', StatusCodes.INTERNAL_SERVER_ERROR, error)
+      );
     }
     if (results.length === 0) {
-      const errorObj = new Error('도서 목록이 없음');
-      errorObj.statusCode = StatusCodes.NOT_FOUND;
-      return next(errorObj);
+      return next(CustomError('해당 도서 없음', StatusCodes.NOT_FOUND));
     }
 
     res.status(StatusCodes.OK).json(results);
   });
 };
+
 const getBookDetail = (req, res, next) => {
   const bookId = Number(req.params.bookId);
 
-  const sql = `SELECT * FROM books WHERE id = ? `;
+  const sql = `SELECT * FROM books JOIN categories ON books.category_id = categories.id WHERE books.id = ? `;
   const value = [bookId];
   mariadb.query(sql, value, (error, results) => {
     if (error) {
-      const errorObj = new Error('sql 오류');
-      errorObj.statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
-      return next(errorObj);
+      return next(
+        CustomError('sql 오류', StatusCodes.INTERNAL_SERVER_ERROR, error)
+      );
     }
     if (results.length === 0) {
-      const errorObj = new Error('해당 도서 없음');
-      errorObj.statusCode = StatusCodes.NOT_FOUND;
-      return next(errorObj);
+      return next(CustomError('해당 도서 없음', StatusCodes.NOT_FOUND));
     }
     res.status(StatusCodes.OK).json(results);
   });
 };
+
 module.exports = { getAllBooks, getBookDetail };
