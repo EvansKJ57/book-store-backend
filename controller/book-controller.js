@@ -37,11 +37,11 @@ const getAllBooks = (req, res, next) => {
   mariadb.query(sql, values, (error, results) => {
     if (error) {
       return next(
-        CustomError('sql 오류', StatusCodes.INTERNAL_SERVER_ERROR, error)
+        new CustomError('sql 오류', StatusCodes.INTERNAL_SERVER_ERROR, error)
       );
     }
     if (results.length === 0) {
-      return next(CustomError('해당 도서 없음', StatusCodes.NOT_FOUND));
+      return next(new CustomError('해당 도서 없음', StatusCodes.NOT_FOUND));
     }
 
     res.status(StatusCodes.OK).json(results);
@@ -56,11 +56,11 @@ const getBookDetail = (req, res, next) => {
   mariadb.query(sql, value, (error, results) => {
     if (error) {
       return next(
-        CustomError('sql 오류', StatusCodes.INTERNAL_SERVER_ERROR, error)
+        new CustomError('sql 오류', StatusCodes.INTERNAL_SERVER_ERROR, error)
       );
     }
     if (results.length === 0) {
-      return next(CustomError('해당 도서 없음', StatusCodes.NOT_FOUND));
+      return next(new CustomError('해당 도서 없음', StatusCodes.NOT_FOUND));
     }
     res.status(StatusCodes.OK).json(results);
   });
