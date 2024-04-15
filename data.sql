@@ -36,9 +36,27 @@ SELECT * FROM books LEFT JOIN  categories ON books.category_id = categories.id W
 
 SELECT * FROM books WHERE pub_date BETWEEN DATE_SUB(NOW(),INTERVAL 30 DAY) AND NOW();
 
-SELECT * FROM books 
-WHERE pub_date BETWEEN DATE_SUB(NOW(),INTERVAL 30 DAY) AND NOW() 
-AND category_id = 0;
+-- 도서 상세정보 쿼리
+SELECT *,
+(SELECT count(*) FROM likes WHERE liked_book_id = books.id) AS likes,
+(SELECT EXISTS(SELECT * FROM likes WHERE user_id = 1 AND liked_book_id = 10)) AS liked 
+FROM books
+LEFT JOIN categories
+ON books.category_id = categories.category_id
+WHERE books.id = 10;
 
 SELECT * FROM books LEFT JOIN  categories ON books.category_id = categories.id
 WHERE pub_date BETWEEN DATE_SUB(NOW(),INTERVAL 30 DAY) AND NOW() AND category_id = 0;
+
+-- 유저아이디 = 1 의 도서 아이디= 10을 좋아요했는지 여부 포함해서 도서 정보 쿼리하기
+SELECT *,
+(SELECT count(*) FROM likes WHERE liked_book_id = books.id) AS likes,
+(SELECT EXISTS(SELECT * FROM likes WHERE user_id = 1 AND liked_book_id = 10)) AS liked 
+FROM books
+LEFT JOIN categories
+ON books.category_id = categories.category_id
+WHERE books.id = 10;
+
+INSERT INTO likes (user_id, liked_book_id) VALUES (1,10)
+
+DELETE FROM likes WHERE user_id = 5 AND liked_book_id = 10

@@ -6,13 +6,16 @@ const CustomError = require('../util/CustomError');
 const getAllBooks = (req, res, next) => {
   const { category_id, newBooks, curPage, pageSize } = req.query;
 
-  let sql = `SELECT * FROM books`;
-  const values = [];
+  let sql = `SELECT *,
+  (SELECT count(*) FROM likes WHERE liked_book_id = books.id) AS likes,
+  (SELECT EXISTS(SELECT * FROM likes WHERE liked_book_id = books.id)) AS liked 
+  FROM books
+  LEFT JOIN categories
+  ON books.category_id = categories.category_id`;
   const conditions = [];
 
   if (category_id) {
-    conditions.push(`category_id = ?`);
-    values.push(Number(category_id));
+    conditions.push(`category_id = "${Number(category_id)}"`);
   }
   if (newBooks) {
     conditions.push(
@@ -25,16 +28,13 @@ const getAllBooks = (req, res, next) => {
   }
 
   if (curPage && pageSize) {
-    sql += ` LIMIT ?, ?`;
     const limit = Number(pageSize);
     const offset = limit * (Number(curPage) - 1);
-    values.push(offset);
-    values.push(limit);
+    sql += ` LIMIT "${offset}", "${limit}"`;
   }
 
   // console.log(sql, values);
-
-  mariadb.query(sql, values, (error, results) => {
+  mariadb.query(sql, (error, results) => {
     if (error) {
       return next(
         new CustomError('sql 오류', StatusCodes.INTERNAL_SERVER_ERROR, error)
@@ -49,11 +49,17 @@ const getAllBooks = (req, res, next) => {
 };
 
 const getBookDetail = (req, res, next) => {
+  const { userId } = req.body;
   const bookId = Number(req.params.bookId);
 
-  const sql = `SELECT * FROM books JOIN categories ON books.category_id = categories.id WHERE books.id = ? `;
-  const value = [bookId];
-  mariadb.query(sql, value, (error, results) => {
+  const sql = `SELECT *,
+  (SELECT count(*) FROM likes WHERE liked_book_id = books.id) AS likes,
+  (SELECT EXISTS(SELECT * FROM likes WHERE user_id = "${userId}" AND liked_book_id = "${bookId}")) AS liked 
+  FROM books
+  LEFT JOIN categories
+  ON books.category_id = categories.category_id
+  WHERE books.id = "${bookId}"`;
+  mariadb.query(sql, (error, results) => {
     if (error) {
       return next(
         new CustomError('sql 오류', StatusCodes.INTERNAL_SERVER_ERROR, error)
