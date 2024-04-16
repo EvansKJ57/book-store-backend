@@ -6,7 +6,7 @@ const usersRoutes = require('./routes/users');
 const booksRoutes = require('./routes/books');
 const likesRoutes = require('./routes/likes');
 const orderRoutes = require('./routes/orders');
-const cartRoutes = require('./routes/carts');
+const cartRoutes = require('./routes/cart');
 
 app.use(express.json());
 dotenv.config();
@@ -15,7 +15,7 @@ app.use('/users', usersRoutes);
 app.use('/books', booksRoutes);
 app.use('/likes', likesRoutes);
 app.use('/orders', orderRoutes);
-app.use('/carts', cartRoutes);
+app.use('/cart', cartRoutes);
 
 app.use((error, req, res, next) => {
   const statusCode = error.statusCode || 500;

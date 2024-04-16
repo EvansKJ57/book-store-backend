@@ -60,3 +60,11 @@ WHERE books.id = 10;
 INSERT INTO likes (user_id, liked_book_id) VALUES (1,10)
 
 DELETE FROM likes WHERE user_id = 5 AND liked_book_id = 10
+
+-- carts 테이블 관련 sql
+
+INSERT INTO carts (user_id, book_id, qty) VALUES (1, 13, 1);
+
+SELECT * FROM books LEFT JOIN carts ON carts.book_id = books.id WHERE user_id = 1;
+
+DELETE FROM carts WHERE id = 9;
