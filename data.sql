@@ -68,3 +68,26 @@ INSERT INTO carts (user_id, book_id, qty) VALUES (1, 13, 1);
 SELECT * FROM books LEFT JOIN carts ON carts.book_id = books.id WHERE user_id = 1;
 
 DELETE FROM carts WHERE id = 9;
+
+
+-- deliveries 테이블에 배송관련 정보 입력
+INSERT INTO deliveries (address, receiver, contact)
+VALUES ('서울시 중구', '기정', '010-4233-2311');
+
+-- orders 테이블에 주문정보 입력
+INSERT INTO orders (user_id, delivery_id)
+VALUES ( 1, (SELECT max(id) FROM deliveries));
+
+-- 주문상테 정보 입력
+INSERT INTO order_details (order_id, book_id, qty)
+VALUES ((SELECT max(id) FROM orders), 7, 1);
+
+INSERT INTO order_details (order_id, book_id, qty)
+VALUES (1, 9, 2);
+
+SELECT max(id) FROM deliveries;
+
+-- 카트에서 데이터 가져와서 orders에 방금 추가된 id 가져와서 carts테이블에 넣기
+INSERT INTO order_details (order_id, book_id, qty)
+SELECT "${insertOrders.insertId}", book_id, qty FROM carts
+WHERE carts.id IN (${carts})

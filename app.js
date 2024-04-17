@@ -7,10 +7,12 @@ const booksRoutes = require('./routes/books');
 const likesRoutes = require('./routes/likes');
 const orderRoutes = require('./routes/orders');
 const cartRoutes = require('./routes/cart');
+const categoriesRoutes = require('./routes/category');
 
 app.use(express.json());
 dotenv.config();
 
+app.use('/category', categoriesRoutes);
 app.use('/users', usersRoutes);
 app.use('/books', booksRoutes);
 app.use('/likes', likesRoutes);
