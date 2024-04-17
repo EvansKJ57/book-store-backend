@@ -14,4 +14,4 @@ const mariadb = mysql.createConnection({
   dateStrings: true,
 });
 
-module.exports = mariadb;
+module.exports = mariadb.promise();
