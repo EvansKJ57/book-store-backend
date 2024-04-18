@@ -6,12 +6,14 @@ const host = process.env.MYSQL_HOST;
 const user = process.env.MYSQL_USER;
 const password = process.env.MYSQL_PW;
 
-const mariadb = mysql.createConnection({
-  host,
-  user,
-  password,
-  database: 'Bookshop',
-  dateStrings: true,
-});
+const mariadb = mysql
+  .createConnection({
+    host,
+    user,
+    password,
+    database: 'Bookshop',
+    dateStrings: true,
+  })
+  .promise();
 
-module.exports = mariadb.promise();
+module.exports = mariadb;
