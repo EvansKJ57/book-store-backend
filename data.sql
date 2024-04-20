@@ -91,3 +91,20 @@ SELECT max(id) FROM deliveries;
 INSERT INTO order_details (order_id, book_id, qty)
 SELECT "${insertOrders.insertId}", book_id, qty FROM carts
 WHERE carts.id IN (${carts})
+
+-- 결제된 장바구니 물품 삭제
+
+DELETE FROM carts WHERE id IN (1,3,6);
+
+-- 해당 유저의 주문 내역 전체 보기
+SELECT 
+orders.id, deliveries.address, orders.created_at, deliveries.receiver,books.id AS book_id, 
+books.title, books.price, books.author, order_details.qty
+FROM orders
+LEFT JOIN deliveries
+ON orders.delivery_id = deliveries.id
+LEFT JOIN order_details
+ON orders.id = order_details.order_id
+LEFT JOIN books
+ON books.id = order_details.book_id
+WHERE orders.user_id = 2;
