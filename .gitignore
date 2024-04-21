@@ -36,5 +36,6 @@ logs
 *.sln
 *.sw?
 
-#######
-md-memo/
+####
+
+md-memo-*/
