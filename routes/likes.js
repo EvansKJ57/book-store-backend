@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { addLike, removeLike } = require('../controller/likes-controller');
+const { addLike, removeLike } = require('../controller/likesController');
 
 router.post('/:bookId', addLike);
 
