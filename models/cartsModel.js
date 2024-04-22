@@ -9,7 +9,7 @@ const addToCart = async (userId, bookId, qty) => {
 
 const getCart = async (userId, selectedItems) => {
   let sql = `SELECT 
-      carts.id AS cart_id, books.id, books.title, books.summary, books.price, carts.qty
+      carts.id AS cart_id, books.id AS book_id, books.title, books.summary, books.price, carts.qty
       FROM carts 
       LEFT JOIN books ON carts.book_id = books.id`;
   const conditions = [`user_id = "${userId}"`];

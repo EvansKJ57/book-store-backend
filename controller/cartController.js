@@ -3,8 +3,9 @@ const CartService = require('../service/cartsService');
 
 const addToCart = async (req, res, next) => {
   try {
-    const { userId, bookId, qty } = req.body;
-    const results = await CartService.addToCart(userId, bookId, qty);
+    const { bookId, qty } = req.body;
+    const user = req.user;
+    const results = await CartService.addToCart(user.id, bookId, qty);
     res.status(StatusCodes.OK).json(results);
   } catch (error) {
     next(error);
@@ -13,9 +14,9 @@ const addToCart = async (req, res, next) => {
 
 const getCarts = async (req, res, next) => {
   try {
-    const { userId, selectedItems } = req.body;
-
-    const result = await CartService.getCarts(userId, selectedItems);
+    const { selectedItems } = req.body;
+    const user = req.user;
+    const result = await CartService.getCarts(user.id, selectedItems);
     res.status(StatusCodes.OK).json(result);
   } catch (error) {
     next(error);
