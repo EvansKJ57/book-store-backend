@@ -11,6 +11,7 @@ const addToCart = async (userId, bookId, qty) => {
     throw new CustomError('sql 오류', StatusCodes.INTERNAL_SERVER_ERROR, error);
   }
 };
+
 const getCarts = async (userId, selectedItems) => {
   try {
     const result = await CartsModel.getCart(userId, selectedItems);

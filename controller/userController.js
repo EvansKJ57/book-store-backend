@@ -56,7 +56,7 @@ const login = async (req, res, next) => {
     const token = jwt.sign(
       { email: results[0].email, id: results[0].id },
       process.env.JWT_AC_KEY,
-      { expiresIn: '30m' }
+      { expiresIn: '10m' }
     );
     //토큰 쿠키에 담기
     console.log('로그인시 발행된 토큰 : ', token);

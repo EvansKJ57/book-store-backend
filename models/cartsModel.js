@@ -9,7 +9,7 @@ const addToCart = async (userId, bookId, qty) => {
 
 const getCart = async (userId, selectedItems) => {
   let sql = `SELECT 
-      carts.id AS cart_id, books.id AS book_id, books.title, books.summary, books.price, carts.qty
+      carts.id AS cartId, books.id AS bookId, books.title, books.summary, books.price, carts.qty
       FROM carts 
       LEFT JOIN books ON carts.book_id = books.id`;
   const conditions = [`user_id = "${userId}"`];
@@ -20,8 +20,8 @@ const getCart = async (userId, selectedItems) => {
   }
   // sql문 조건 취합해서 추가하기
   if (conditions) {
-    const condition = conditions.join(' AND ');
-    sql += ` WHERE ${condition}`;
+    const concat = conditions.join(' AND ');
+    sql += ` WHERE ${concat}`;
   }
 
   const [results] = await mariadb.query(sql);

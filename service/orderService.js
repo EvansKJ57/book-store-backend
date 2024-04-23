@@ -45,7 +45,7 @@ const getOrdersByUserId = async (userId) => {
         dataMap[order.id] = {
           orderId: order.id,
           address: order.address,
-          created_at: order.created_at,
+          createdAt: order.created_at,
           receiver: order.receiver,
           totalPrice: order.price * order.qty,
           totalQty: order.qty,

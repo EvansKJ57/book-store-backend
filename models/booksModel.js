@@ -1,9 +1,8 @@
 const mariadb = require('../db/mariadb');
 
-const getAllBooks = async (category_id, newBooks, pageSize, curPage) => {
+const getBooks = async (category_id, newBooks, pageSize, curPage) => {
   let sql = `SELECT *,
-      (SELECT count(*) FROM likes WHERE liked_book_id = books.id) AS likes,
-      (SELECT EXISTS(SELECT * FROM likes WHERE liked_book_id = books.id)) AS liked 
+      (SELECT count(*) FROM likes WHERE liked_book_id = books.id) AS likes
       FROM books
       LEFT JOIN categories
       ON books.category_id = categories.category_id`;
@@ -32,7 +31,13 @@ const getAllBooks = async (category_id, newBooks, pageSize, curPage) => {
   return results;
 };
 
-const getBookDetailWithLikes = async (userId, bookId) => {
+const getBooksCount = async () => {
+  let sql = `SELECT count(*) AS totalCount FROM books`;
+  const [results] = await mariadb.query(sql);
+  return results[0];
+};
+
+const getBookDetailWithLikes = async (bookId, userId) => {
   const sql = `SELECT *,
     (SELECT count(*) FROM likes WHERE liked_book_id = books.id) AS likes,
     (SELECT EXISTS(SELECT * FROM likes WHERE user_id = "${userId}" AND liked_book_id = "${bookId}")) AS liked 
@@ -45,4 +50,4 @@ const getBookDetailWithLikes = async (userId, bookId) => {
   return results;
 };
 
-module.exports = { getAllBooks, getBookDetailWithLikes };
+module.exports = { getBooks, getBooksCount, getBookDetailWithLikes };

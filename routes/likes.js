@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const { addLike, removeLike } = require('../controller/likesController');
-const verifyAuthorization = require('../middleware/verifyAuthorization');
+const verifyAuth = require('../middleware/verifyAuth');
 
-router.use(verifyAuthorization);
+router.use(verifyAuth);
 
 router.post('/:bookId', addLike);
 

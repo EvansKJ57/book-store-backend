@@ -10,7 +10,7 @@ const insertData = async (user_id, delivery_id) => {
 
 const getAllDataByUserId = async (userId) => {
   let sql = `SELECT
-      orders.id, deliveries.address, orders.created_at, deliveries.receiver,books.id AS book_id,
+      orders.id, deliveries.address, orders.created_at , deliveries.receiver,books.id AS book_id,
       books.title, books.price, books.author, order_details.qty
       FROM orders
       LEFT JOIN deliveries

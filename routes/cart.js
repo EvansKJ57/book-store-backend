@@ -3,9 +3,9 @@ const express = require('express');
 const router = express.Router();
 
 const cartController = require('../controller/cartController');
-const verifyAuthorization = require('../middleware/verifyAuthorization');
+const verifyAuth = require('../middleware/verifyAuth');
 
-router.use(verifyAuthorization);
+router.use(verifyAuth);
 
 router.post('/', cartController.addToCart);
 

@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { StatusCodes } = require('http-status-codes');
+
 const CustomError = require('../util/CustomError');
 
 const verifyAuthorization = (req, res, next) => {
@@ -13,7 +14,6 @@ const verifyAuthorization = (req, res, next) => {
     req.user = isVerified;
     next();
   } catch (error) {
-    console.log(error.name);
     if (!error.statusCode) {
       if (error.name === 'JsonWebTokenError') {
         error.statusCode = StatusCodes.BAD_REQUEST;
