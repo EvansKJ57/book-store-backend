@@ -7,7 +7,7 @@ const postOrder = async (req, res, next) => {
     const user = req.user;
     const results = await OrderService.postOrder(carts, delivery, user.id);
 
-    res.status(StatusCodes.OK).json({ orderId: results.insertId });
+    res.status(StatusCodes.CREATED).json({ orderId: results.insertId });
   } catch (error) {
     next(error);
   }

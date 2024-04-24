@@ -4,8 +4,13 @@ const BookService = require('../service/booksService');
 //(카테고리 별, 신간) 전체 도서 목록 조회
 const getAllBooks = async (req, res, next) => {
   try {
-    const queries = req.query;
-    const results = await BookService.getBooks(queries);
+    const { category_id, newBooks, pageSize, curPage } = req.query;
+    const results = await BookService.getBooks(
+      category_id,
+      newBooks,
+      pageSize,
+      curPage
+    );
     res.status(StatusCodes.OK).json(results);
   } catch (error) {
     next(error);

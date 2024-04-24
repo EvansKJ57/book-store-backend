@@ -7,13 +7,15 @@ const getBooks = async (category_id, newBooks, pageSize, curPage) => {
       LEFT JOIN categories
       ON books.category_id = categories.category_id`;
   const conditions = [];
+  const values = [];
 
   if (category_id) {
-    conditions.push(`books.category_id = "${Number(category_id)}"`);
+    conditions.push(`books.category_id = ?`);
+    values.push(Number(category_id));
   }
   if (newBooks) {
     conditions.push(
-      `pub_date BETWEEN DATE_SUB(NOW(),INTERVAL 30 DAY) AND NOW()`
+      `pub_date BETWEEN DATE_SUB(NOW(),INTERVAL 60 DAY) AND NOW()`
     );
   }
   //sql 합치기
@@ -24,10 +26,11 @@ const getBooks = async (category_id, newBooks, pageSize, curPage) => {
   if (curPage && pageSize) {
     const limit = Number(pageSize);
     const offset = limit * (Number(curPage) - 1);
-    sql += ` LIMIT ${offset}, ${limit}`;
+    sql += ` LIMIT ?, ?`;
+    values.push(offset, limit);
   }
 
-  const [results] = await mariadb.query(sql);
+  const [results] = await mariadb.query(sql, values);
   return results;
 };
 
@@ -40,13 +43,14 @@ const getBooksCount = async () => {
 const getBookDetailWithLikes = async (bookId, userId) => {
   const sql = `SELECT *,
     (SELECT count(*) FROM likes WHERE liked_book_id = books.id) AS likes,
-    (SELECT EXISTS(SELECT * FROM likes WHERE user_id = "${userId}" AND liked_book_id = "${bookId}")) AS liked 
+    (SELECT EXISTS(SELECT * FROM likes WHERE user_id = ? AND liked_book_id = ? )) AS liked 
     FROM books
     LEFT JOIN categories
     ON books.category_id = categories.category_id
-    WHERE books.id = "${bookId}"`;
+    WHERE books.id = ?`;
 
-  const [results] = await mariadb.query(sql);
+  const values = [userId, bookId, bookId];
+  const [results] = await mariadb.query(sql, values);
   return results;
 };
 

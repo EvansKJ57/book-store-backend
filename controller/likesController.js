@@ -8,7 +8,7 @@ const addLike = async (req, res, next) => {
     const user = req.user;
 
     const data = await likesService.addLike(user.id, bookId);
-    res.status(StatusCodes.OK).json(data);
+    res.status(StatusCodes.CREATED).json(data);
   } catch (error) {
     next(error);
   }

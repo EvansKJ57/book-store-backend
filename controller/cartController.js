@@ -6,7 +6,7 @@ const addToCart = async (req, res, next) => {
     const { bookId, qty } = req.body;
     const user = req.user;
     const results = await CartService.addToCart(user.id, bookId, qty);
-    res.status(StatusCodes.OK).json(results);
+    res.status(StatusCodes.CREATED).json(results);
   } catch (error) {
     next(error);
   }
@@ -26,8 +26,8 @@ const getCarts = async (req, res, next) => {
 const removeCartItem = async (req, res, next) => {
   try {
     const { cartId } = req.params;
-
-    const results = await CartService.deleteCart(cartId);
+    const user = req.user;
+    const results = await CartService.deleteCart(cartId, user.id);
     res.status(StatusCodes.OK).json(results);
   } catch (error) {
     next(error);
