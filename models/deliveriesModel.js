@@ -1,11 +1,17 @@
 const mariadb = require('../db/mariadb');
 
-const insertData = async ({ address, receiver, contact }) => {
+const insertData = async ({ address, receiver, contact }, conn) => {
   let sql = `INSERT INTO deliveries (address, receiver, contact)
-        VALUES ("${address}", "${receiver}", "${contact}")`;
+        VALUES (?, ?, ?)`;
+  let values = [address, receiver, contact];
 
-  const [results] = await mariadb.query(sql);
-  return results;
+  if (conn) {
+    const [results] = await conn.query(sql, values);
+    return results;
+  } else {
+    const [results] = await mariadb.query(sql, values);
+    return results;
+  }
 };
 
 module.exports = { insertData };
