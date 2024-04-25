@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { addLike, removeLike } = require('../controller/likesController');
+const { addLike, removeLike } = require('../controller/likeController');
 const verifyAuth = require('../middleware/verifyAuth');
 
 router.use(verifyAuth);

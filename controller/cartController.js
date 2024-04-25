@@ -1,5 +1,5 @@
 const { StatusCodes } = require('http-status-codes');
-const CartService = require('../service/cartsService');
+const CartService = require('../service/cartService');
 
 const addToCart = async (req, res, next) => {
   try {
