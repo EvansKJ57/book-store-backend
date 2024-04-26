@@ -1,5 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const cookieParser = require('cookie-parser');
 const app = express();
 
 const usersRoutes = require('./routes/users');
@@ -8,8 +9,10 @@ const likesRoutes = require('./routes/likes');
 const orderRoutes = require('./routes/orders');
 const cartRoutes = require('./routes/cart');
 const categoriesRoutes = require('./routes/category');
+const authRoutes = require('./routes/auth');
 
 app.use(express.json());
+app.use(cookieParser());
 dotenv.config();
 
 app.use('/category', categoriesRoutes);
@@ -18,6 +21,7 @@ app.use('/books', booksRoutes);
 app.use('/likes', likesRoutes);
 app.use('/orders', orderRoutes);
 app.use('/cart', cartRoutes);
+app.use('/auth', authRoutes);
 
 app.use((error, req, res, next) => {
   const statusCode = error.statusCode || 500;

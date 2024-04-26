@@ -24,13 +24,13 @@ const postOrderTransaction = async (carts, delivery, userId) => {
       conn
     );
     if (orderDetailResult.affectedRows !== carts.length) {
-      throw new Error('order_detail 테이블 저장 실패');
+      throw new Error('주문 상세 정보 저장 실패');
     }
     //주문된 카트 물품들을 삭제하는 로직
     const cartsResult = await CartsModel.deleteCart(carts, userId, conn);
     //위에 order_detail에서 잡아낼거지만 일단 keep...
     if (cartsResult.affectedRows !== carts.length) {
-      throw new Error('carts 테이블 저장 실패');
+      throw new Error('카트 데이터 삭제 실패');
     }
     await conn.commit();
     return ordersResult;

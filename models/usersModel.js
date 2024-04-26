@@ -16,6 +16,13 @@ const findUserByEmail = async (email) => {
   return results;
 };
 
+const updateToken = async (email, token) => {
+  let sql = `UPDATE users SET token = ? WHERE email = ?`;
+  const values = [token, email];
+  const [results] = await mariadb.query(sql, values);
+  return results;
+};
+
 const updatePw = async (requestedHashPw, salt, email) => {
   let sql = `UPDATE users 
       SET password =  ? , salt = ? WHERE email = ? `;
@@ -25,4 +32,4 @@ const updatePw = async (requestedHashPw, salt, email) => {
   return results;
 };
 
-module.exports = { create, findUserByEmail, updatePw };
+module.exports = { create, findUserByEmail, updatePw, updateToken };
