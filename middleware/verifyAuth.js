@@ -3,7 +3,7 @@ const { StatusCodes } = require('http-status-codes');
 
 const CustomError = require('../util/CustomError');
 
-const verifyAuthorization = (req, res, next) => {
+const verifyAuth = (req, res, next) => {
   try {
     const { authorization } = req.headers;
     if (!authorization) {
@@ -25,4 +25,4 @@ const verifyAuthorization = (req, res, next) => {
   }
 };
 
-module.exports = verifyAuthorization;
+module.exports = verifyAuth;

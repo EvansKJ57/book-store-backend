@@ -1,6 +1,8 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
+const helmet = require('helmet');
+
 const app = express();
 
 const usersRoutes = require('./routes/users');
@@ -10,6 +12,8 @@ const orderRoutes = require('./routes/orders');
 const cartRoutes = require('./routes/cart');
 const categoriesRoutes = require('./routes/category');
 const authRoutes = require('./routes/auth');
+
+app.use(helmet());
 
 app.use(express.json());
 app.use(cookieParser());

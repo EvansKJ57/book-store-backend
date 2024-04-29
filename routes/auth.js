@@ -15,7 +15,6 @@ router.post('/reissue', async (req, res, next) => {
       throw new CustomError('token 없음', StatusCodes.BAD_REQUEST);
     }
     const isVerified = jwt.verify(rfToken, process.env.JWT_RF_KEY);
-    console.log(isVerified);
     const foundUser = await UsersModel.findUserByEmail(isVerified.email);
     // 디비에 유저의 리프레쉬 토큰과 요청 온 리프레쉬 토큰이 맞는지 확인
     if (foundUser[0].token !== rfToken) {
@@ -26,7 +25,7 @@ router.post('/reissue', async (req, res, next) => {
     }
     const acToken = issueAccessToken(isVerified.email, isVerified.id);
 
-    res.status(200).json({ acToken: acToken });
+    res.status(StatusCodes.OK).json({ acToken: acToken });
   } catch (error) {
     if (!error.statusCode) {
       if (error.name === 'JsonWebTokenError') {
@@ -45,7 +44,7 @@ router.post('/logout', async (req, res, next) => {
     const isVerified = jwt.verify(rfToken, process.env.JWT_RF_KEY);
     const results = await UsersModel.updateToken(isVerified.email, null);
 
-    res.json(results);
+    res.status(StatusCodes.Ok).json(results);
   } catch (error) {
     throw new CustomError(
       '로그아웃 처리중 오류',

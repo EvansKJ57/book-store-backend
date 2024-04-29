@@ -1,5 +1,4 @@
 const { StatusCodes } = require('http-status-codes');
-const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 
 const CustomError = require('../util/CustomError');
@@ -44,19 +43,17 @@ const loginUser = async (email, password) => {
       .toString('base64');
     //비밀번호 다른 경우
     if (foundUser.password !== hashRequestPw) {
-      //이메일이 다르거나 비밀번호가 다르면 여기서 에러 처리
       throw new CustomError(
         '이메일 혹은 비밀번호가 다름',
         StatusCodes.UNAUTHORIZED
       );
     }
-    //jwt 토큰 발행
     const acToken = issueAccessToken(foundUser.email, foundUser.id);
     const rfToken = issueRefreshToken(foundUser.email, foundUser.id);
     await UsersModel.updateToken(foundUser.email, rfToken);
 
-    console.log('로그인시 발행된 엑세스 토큰 : ', acToken);
-    console.log('로그인시 발행된 리프레쉬 토큰 : ', rfToken);
+    console.log('로그인 시 발행된 엑세스 토큰 : ', acToken);
+    console.log('로그인 시 발행된 리프레쉬 토큰 : ', rfToken);
     return [results, acToken, rfToken];
   } catch (error) {
     if (!error.statusCode) {
