@@ -44,7 +44,7 @@ router.post('/logout', async (req, res, next) => {
     const isVerified = jwt.verify(rfToken, process.env.JWT_RF_KEY);
     const results = await UsersModel.updateToken(isVerified.email, null);
 
-    res.status(StatusCodes.Ok).json(results);
+    res.status(StatusCodes.OK).json(results);
   } catch (error) {
     throw new CustomError(
       '로그아웃 처리중 오류',
