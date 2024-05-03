@@ -1,13 +1,21 @@
 const express = require('express');
+const router = express.Router();
 
 const bookController = require('../controller/bookController');
+const {
+  bookIdParamsCheck,
+  bookQueryCheck,
+} = require('../middleware/validationRules');
+const validateRequest = require('../middleware/validateRequest');
 const verifyAuth = require('../middleware/verifyAuth');
-
-const router = express.Router();
 
 router.use(verifyAuth);
 
-router.get('/', bookController.getAllBooks);
-router.get('/:bookId', bookController.getBookDetail);
+router.get('/', [bookQueryCheck, validateRequest], bookController.getAllBooks);
+router.get(
+  '/:bookId',
+  [bookIdParamsCheck, validateRequest],
+  bookController.getBookDetail
+);
 
 module.exports = router;

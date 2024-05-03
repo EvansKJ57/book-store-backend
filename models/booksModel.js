@@ -1,6 +1,6 @@
 const mariadb = require('../db/mariadb');
 
-const getBooks = async (category_id, newBooks, pageSize, curPage) => {
+const getBooks = async (categoryId, newBooks, pageSize, curPage) => {
   let sql = `SELECT *,
       (SELECT count(*) FROM likes WHERE liked_book_id = books.id) AS likes
       FROM books
@@ -9,9 +9,9 @@ const getBooks = async (category_id, newBooks, pageSize, curPage) => {
   const conditions = [];
   const values = [];
 
-  if (category_id) {
+  if (categoryId) {
     conditions.push(`books.category_id = ?`);
-    values.push(Number(category_id));
+    values.push(categoryId);
   }
   if (newBooks) {
     conditions.push(
@@ -24,8 +24,8 @@ const getBooks = async (category_id, newBooks, pageSize, curPage) => {
   }
 
   if (curPage && pageSize) {
-    const limit = Number(pageSize);
-    const offset = limit * (Number(curPage) - 1);
+    const limit = pageSize;
+    const offset = limit * (curPage - 1);
     sql += ` LIMIT ?, ?`;
     values.push(offset, limit);
   }

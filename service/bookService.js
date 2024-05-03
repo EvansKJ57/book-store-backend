@@ -3,11 +3,11 @@ const CustomError = require('../util/CustomError');
 
 const BooksModel = require('../models/booksModel');
 
-const getBooks = async (category_id, newBooks, pageSize, curPage) => {
+const getBooks = async (categoryId, newBooks, pageSize, curPage) => {
   try {
     //도서 조회 && 전체 도서 권 수 조회 병렬 처리
     const [bookList, totalCount] = await Promise.all([
-      BooksModel.getBooks(category_id, newBooks, pageSize, curPage),
+      BooksModel.getBooks(categoryId, newBooks, pageSize, curPage),
       BooksModel.getBooksCount(),
     ]);
     if (bookList.length === 0) {

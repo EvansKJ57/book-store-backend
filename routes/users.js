@@ -1,43 +1,34 @@
 const express = require('express');
-const { body } = require('express-validator');
-const validationRequest = require('../middleware/validationRequest');
-
-const userController = require('../controller/userController');
-
 const router = express.Router();
+
+const { userValidatorConfig } = require('../middleware/validationRules');
+const validateRequest = require('../middleware/validateRequest');
+const userController = require('../controller/userController');
 
 router.post(
   '/join',
   [
-    body('email').notEmpty().isEmail(),
-    body('name').notEmpty().isLength({ min: 4 }),
-    body('password').notEmpty().isString(),
-    validationRequest,
+    userValidatorConfig.email,
+    userValidatorConfig.name,
+    userValidatorConfig.password,
+    validateRequest,
   ],
   userController.create
 );
 
 router.post(
   '/login',
-  [
-    body('email').notEmpty().isEmail(),
-    body('password').notEmpty().isString(),
-    validationRequest,
-  ],
+  [userValidatorConfig.email, userValidatorConfig.password, validateRequest],
   userController.login
 );
 router.post(
   '/reset',
-  [body('email').notEmpty().isEmail(), validationRequest],
+  [userValidatorConfig.email, validateRequest],
   userController.pwResetRequest
 );
 router.put(
   '/reset',
-  [
-    body('email').notEmpty().isEmail(),
-    body('password').notEmpty().isString(),
-    validationRequest,
-  ],
+  [userValidatorConfig.email, userValidatorConfig.password, validateRequest],
   userController.pwReset
 );
 

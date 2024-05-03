@@ -6,7 +6,6 @@ const addLike = async (req, res, next) => {
   try {
     const { bookId } = req.params;
     const user = req.user;
-
     const data = await LikeService.addLike(user.id, bookId);
     res.status(StatusCodes.CREATED).json(data);
   } catch (error) {
