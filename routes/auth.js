@@ -1,10 +1,63 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const qs = require('qs');
 const { issueAccessToken } = require('../util/token/issueToken');
 const UsersModel = require('../models/usersModel');
 const CustomError = require('../util/CustomError');
 const { StatusCodes } = require('http-status-codes');
+const { default: axios } = require('axios');
 const router = express.Router();
+
+//Oauth - google
+router.get('/oauth/google/login', (req, res) => {
+  const rootUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
+  const optionsStringify = qs.stringify({
+    response_type: 'code',
+    prompt: 'consent',
+    scope: [
+      'https://www.googleapis.com/auth/userinfo.email',
+      'https://www.googleapis.com/auth/userinfo.profile',
+    ].join(' '),
+    access_type: 'offline',
+    redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+    client_id: process.env.GOOGLE_CLIENT_ID,
+  });
+  res.redirect(`${rootUrl}?${optionsStringify}`);
+});
+//Oauth - google redirect 코드 받는 곳
+router.get('/oauth/google/redirect', async (req, res, next) => {
+  const queryParse = qs.parse(req.query);
+  const tokenUrl = 'https://oauth2.googleapis.com/token';
+  const userInfoUrl = 'https://www.googleapis.com/oauth2/v2/userinfo';
+  const optionsStringify = qs.stringify({
+    code: queryParse.code,
+    client_id: process.env.GOOGLE_CLIENT_ID,
+    client_secret: process.env.GOOGLE_CLIENT_SECRET,
+    redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+    grant_type: 'authorization_code',
+  });
+  try {
+    const tokenResponse = await axios.post(tokenUrl, optionsStringify, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+      },
+    });
+    const userResponse = await axios.get(userInfoUrl, {
+      headers: {
+        Authorization: `Bearer ${tokenResponse.data.access_token}`,
+      },
+    });
+
+    const googleUser = userResponse.data;
+    console.log(googleUser); // 유저 정보를 받고 이걸 db에 저장하고
+    const isUser = await UsersModel.findUserByEmail(googleUser.email);
+    if (!isUser) {
+      console.log(isUser);
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 
 // 엑세스 토큰은 json으로 res, 리프레쉬 토큰은 쿠키에 담아서  res
 router.post('/reissue', async (req, res, next) => {
