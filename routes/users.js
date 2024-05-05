@@ -16,11 +16,7 @@ router.post(
   userController.create
 );
 
-router.post(
-  '/login',
-  [userValidatorConfig.email, userValidatorConfig.password, validateRequest],
-  userController.login
-);
+
 router.post(
   '/reset',
   [userValidatorConfig.email, validateRequest],
