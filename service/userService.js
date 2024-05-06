@@ -8,14 +8,30 @@ const {
   issueRefreshToken,
 } = require('../util/token/issueToken');
 
-const createUser = async (email, name, password) => {
+const createUser = async (email, name, password, provider, provider_id) => {
   try {
     const salt = crypto.randomBytes(10).toString('base64');
     const requestedHashPw = crypto
       .pbkdf2Sync(password, salt, 10000, 10, 'sha512')
       .toString('base64');
-
-    const results = await UsersModel.create(email, name, requestedHashPw, salt);
+    let results;
+    if (provider && provider_id) {
+      results = await UsersModel.createOauth(
+        email,
+        name,
+        requestedHashPw,
+        salt,
+        provider,
+        provider_id
+      );
+    } else {
+      results = await UsersModel.createLocal(
+        email,
+        name,
+        requestedHashPw,
+        salt
+      );
+    }
     return results;
   } catch (error) {
     throw new CustomError(
@@ -26,7 +42,7 @@ const createUser = async (email, name, password) => {
   }
 };
 
-const loginUser = async (email, password) => {
+const loginUser = async (email, password, provider) => {
   try {
     const results = await UsersModel.findUserByEmail(email);
     //일치하는 유저가 없는 경우
@@ -48,6 +64,7 @@ const loginUser = async (email, password) => {
         StatusCodes.UNAUTHORIZED
       );
     }
+
     const acToken = issueAccessToken(foundUser.email, foundUser.id);
     const rfToken = issueRefreshToken(foundUser.email, foundUser.id);
     await UsersModel.updateToken(foundUser.email, rfToken);

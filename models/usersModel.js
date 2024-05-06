@@ -1,10 +1,25 @@
 const mariadb = require('../db/mariadb');
 
-const create = async (email, name, requestedHashPw, salt) => {
-  let sql = `INSERT INTO users (email, name, password, salt) 
-    values ( ? , ? , ? , ? ) `;
+const createLocal = async (email, name, requestedHashPw, salt) => {
+  let sql = `INSERT INTO users (email, name, password, salt, provider) 
+    values ( ? , ? , ? , ? , ?) `;
 
-  const values = [email, name, requestedHashPw, salt];
+  const values = [email, name, requestedHashPw, salt, 'LOCAL'];
+  const [results] = await mariadb.query(sql, values);
+  return results;
+};
+
+const createOauth = async (
+  email,
+  name,
+  requestedHashPw,
+  salt,
+  provider,
+  provider_id
+) => {
+  let sql = `INSERT INTO users (email, name, password, salt, provider, provider_user_id) 
+    values ( ? , ? , ? , ? , ? , ?) `;
+  const values = [email, name, requestedHashPw, salt, provider, provider_id];
   const [results] = await mariadb.query(sql, values);
   return results;
 };
@@ -32,4 +47,10 @@ const updatePw = async (requestedHashPw, salt, email) => {
   return results;
 };
 
-module.exports = { create, findUserByEmail, updatePw, updateToken };
+module.exports = {
+  createLocal,
+  createOauth,
+  findUserByEmail,
+  updatePw,
+  updateToken,
+};
