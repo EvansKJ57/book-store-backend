@@ -16,7 +16,6 @@ router.post(
   userController.create
 );
 
-
 router.post(
   '/reset',
   [userValidatorConfig.email, validateRequest],

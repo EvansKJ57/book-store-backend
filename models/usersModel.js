@@ -15,12 +15,19 @@ const createOauth = async (
   requestedHashPw,
   salt,
   provider,
-  provider_id
+  provider_userId
 ) => {
   let sql = `INSERT INTO users (email, name, password, salt, provider, provider_user_id) 
     values ( ? , ? , ? , ? , ? , ?) `;
-  const values = [email, name, requestedHashPw, salt, provider, provider_id];
+  const values = [email, name, requestedHashPw, salt, provider, provider_userId];
   const [results] = await mariadb.query(sql, values);
+  return results;
+};
+
+const findUserById = async (userId) => {
+  let sql = `SELECT * FROM users WHERE id = ?`;
+  const value = [userId];
+  const [results] = await mariadb.query(sql, value);
   return results;
 };
 
@@ -51,6 +58,7 @@ module.exports = {
   createLocal,
   createOauth,
   findUserByEmail,
+  findUserById,
   updatePw,
   updateToken,
 };
