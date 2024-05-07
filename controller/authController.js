@@ -3,7 +3,6 @@ const qs = require('qs');
 const crypto = require('crypto');
 
 const CustomError = require('../util/CustomError');
-const UserService = require('../service/userService');
 const authService = require('../service/authService');
 const generateRandomString = require('../util/generateRandomString');
 const cookieOpt = require('../util/cookieOption');
@@ -34,32 +33,12 @@ const loginGoogle = async (req, res) => {
     if (state !== queryParse.state || !nonce) {
       throw new CustomError('invalid state or nonce', StatusCodes.BAD_REQUEST);
     }
-    const tokenResponse = await authService.getAcTokenAndIdTokenFromGoogle(
-      queryParse.code
-    );
 
-    const payload = await authService.checkIdTokenFromGoogle(
-      tokenResponse.data.id_token,
-      nonce
-    );
-
-    let foundUser = await UserService.findUser(payload.email);
-    if (foundUser.length === 0) {
-      const createResults = await UserService.createUser(
-        payload.email,
-        payload.name,
-        generateRandomString(8, 'base64'),
-        'GOOGLE',
-        payload.sub
-      );
-      foundUser = await UserService.findUser(createResults.insertId);
-    }
-    const [user, acToken, rfToken] = await authService.loginUser(
-      foundUser[0].email,
-      foundUser[0].password,
-      'GOOGLE'
-    );
-    // console.log(user);
+    const [user, acToken, rfToken] =
+      await authService.registerOrLoginGoogleUser({
+        code: queryParse.code,
+        nonce,
+      });
     // 쿠키에서 nonce값 삭제
     res.cookie('nonce', '', {
       ...cookieOpt.OauthGoogle,
@@ -75,11 +54,10 @@ const loginGoogle = async (req, res) => {
 const loginLocal = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    const [user, acToken, rfToken] = await authService.loginUser(
+    const [user, acToken, rfToken] = await authService.loginUser({
       email,
       password,
-      'LOCAL'
-    );
+    });
     // 엑세스 토큰은 json으로 res, 리프레쉬 토큰은 쿠키에 담아서  res
     res.cookie('token', rfToken, cookieOpt.rfToken);
     res.status(StatusCodes.OK).json({ email: user.email, acToken });

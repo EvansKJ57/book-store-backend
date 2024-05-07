@@ -1,23 +1,16 @@
 const mariadb = require('../db/mariadb');
 
-const createUser = async (
+const createUser = async ({
   email,
   name,
-  requestedHashPw,
+  pw,
   salt,
-  provider,
-  provider_userId
-) => {
+  provider = 'LOCAL',
+  provider_userId = null,
+}) => {
   const insertUserQuery = `INSERT INTO users (email, name, password, salt, provider, provider_user_id) 
     values ( ? , ? , ? , ? , ? , ?) `;
-  const values = [
-    email,
-    name,
-    requestedHashPw,
-    salt,
-    provider,
-    provider_userId,
-  ];
+  const values = [email, name, pw, salt, provider, provider_userId];
   const [results] = await mariadb.execute(insertUserQuery, values);
   return results;
 };
@@ -36,7 +29,7 @@ const findUserByEmail = async (email) => {
   return results;
 };
 
-const updateToken = async (email, token) => {
+const updateToken = async ({ email, token }) => {
   const updateUserTokenQuery = `UPDATE users SET token = ? WHERE email = ?`;
   const values = [token, email];
   const [results] = await mariadb.execute(updateUserTokenQuery, values);

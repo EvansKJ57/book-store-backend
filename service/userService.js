@@ -4,23 +4,26 @@ const crypto = require('crypto');
 const CustomError = require('../util/CustomError');
 const UsersModel = require('../models/usersModel');
 
-const createUser = async (email, name, password, provider, provider_userId) => {
+const createUser = async ({
+  email,
+  name,
+  pw,
+  provider = 'LOCAL',
+  provider_userId = null,
+}) => {
   try {
-    if (!provider) {
-      provider = 'LOCAL';
-    }
     const salt = crypto.randomBytes(10).toString('base64');
     const requestedHashPw = crypto
-      .pbkdf2Sync(password, salt, 10000, 10, 'sha512')
+      .pbkdf2Sync(pw, salt, 10000, 10, 'sha512')
       .toString('base64');
-    const results = await UsersModel.createUser(
+    const results = await UsersModel.createUser({
       email,
       name,
-      requestedHashPw,
+      pw: requestedHashPw,
       salt,
       provider,
-      provider_userId
-    );
+      provider_userId,
+    });
     return results;
   } catch (error) {
     throw new CustomError(

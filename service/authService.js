@@ -5,7 +5,9 @@ const axios = require('axios');
 const { createRemoteJWKSet, jwtVerify } = require('jose');
 
 const CustomError = require('../util/CustomError');
+const UserService = require('../service/userService');
 const UsersModel = require('../models/usersModel');
+const generateRandomString = require('../util/generateRandomString');
 const {
   issueAccessToken,
   issueRefreshToken,
@@ -14,17 +16,17 @@ const JWKS = createRemoteJWKSet(
   new URL('https://www.googleapis.com/oauth2/v3/certs')
 );
 
-const loginUser = async (email, password, provider) => {
+const loginUser = async ({ email, password, provider = 'LOCAL' }) => {
   try {
     const results = await UsersModel.findUserByEmail(email);
+    const foundUser = results[0];
     // if user don't exist in db
-    if (results.length === 0) {
+    if (!foundUser) {
       throw new CustomError(
         '이메일 혹은 비밀번호가 다름',
         StatusCodes.UNAUTHORIZED
       );
     }
-    const foundUser = results[0];
     if (foundUser.provider !== provider) {
       throw new CustomError('invalid provider', StatusCodes.BAD_REQUEST);
     }
@@ -43,7 +45,7 @@ const loginUser = async (email, password, provider) => {
     }
     const acToken = issueAccessToken(foundUser.email, foundUser.id);
     const rfToken = issueRefreshToken(foundUser.email, foundUser.id);
-    await UsersModel.updateToken(foundUser.email, rfToken);
+    await UsersModel.updateToken({ email: foundUser.email, token: rfToken });
 
     console.log('로그인 시 발행된 엑세스 토큰 : ', acToken);
     console.log('로그인 시 발행된 리프레쉬 토큰 : ', rfToken);
@@ -83,7 +85,7 @@ const logout = async (rfToken) => {
   // 로그아웃은 페이로드만 확인해서 null값으로 초기화
   console.log('<<로그아웃 시 rf 토큰>> : ', rfToken);
   const decoded = jwt.decode(rfToken, process.env.JWT_RF_KEY);
-  await UsersModel.updateToken(decoded.email, null);
+  await UsersModel.updateToken({ email: decoded.email, token: null });
 };
 
 // ---------- Oauth 관련 --------------------
@@ -131,10 +133,40 @@ const checkIdTokenFromGoogle = async (idToken, nonce) => {
   }
 };
 
+const registerOrLoginGoogleUser = async ({ code, nonce }) => {
+  const tokenResponse = await getAcTokenAndIdTokenFromGoogle(code);
+
+  const { email, name, sub } = await checkIdTokenFromGoogle(
+    tokenResponse.data.id_token,
+    nonce
+  );
+
+  let foundUser = await UserService.findUser(email);
+  if (foundUser.length === 0) {
+    const createResults = await UserService.createUser({
+      email,
+      name,
+      pw: generateRandomString(8, 'base64'),
+      provider: 'GOOGLE',
+      provider_userId: sub,
+    });
+    foundUser = await UserService.findUser(createResults.insertId);
+  }
+  const { email: foundUserEmail, password } = foundUser[0];
+  const [user, acToken, rfToken] = await loginUser({
+    email: foundUserEmail,
+    password,
+    provider: 'GOOGLE',
+  });
+
+  return [user, acToken, rfToken];
+};
+
 module.exports = {
   loginUser,
   reissueAcToken,
   logout,
   getAcTokenAndIdTokenFromGoogle,
   checkIdTokenFromGoogle,
+  registerOrLoginGoogleUser,
 };
