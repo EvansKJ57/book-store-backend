@@ -5,7 +5,6 @@ const crypto = require('crypto');
 const CustomError = require('../util/CustomError');
 const UserService = require('../service/userService');
 const authService = require('../service/authService');
-const UsersModel = require('../models/usersModel');
 const generateRandomString = require('../util/generateRandomString');
 const cookieOpt = require('../util/cookieOption');
 
@@ -44,7 +43,7 @@ const loginGoogle = async (req, res) => {
       nonce
     );
 
-    let foundUser = await UsersModel.findUserByEmail(payload.email);
+    let foundUser = await UserService.findUser(payload.email);
     if (foundUser.length === 0) {
       const createResults = await UserService.createUser(
         payload.email,
@@ -53,7 +52,7 @@ const loginGoogle = async (req, res) => {
         'GOOGLE',
         payload.sub
       );
-      foundUser = await UsersModel.findUserById(createResults.insertId);
+      foundUser = await UserService.findUser(createResults.insertId);
     }
     const [user, acToken, rfToken] = await authService.loginUser(
       foundUser[0].email,

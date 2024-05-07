@@ -37,6 +37,19 @@ const createUser = async (email, name, password, provider, provider_userId) => {
     );
   }
 };
+const findUser = async (param) => {
+  try {
+    let results;
+    if (typeof param === 'number') {
+      results = await UsersModel.findUserById(param);
+    } else if (typeof param === 'string') {
+      results = await UsersModel.findUserByEmail(param);
+    }
+    return results;
+  } catch (error) {
+    throw new CustomError('sql 오류', StatusCodes.INTERNAL_SERVER_ERROR, error);
+  }
+};
 
 const pwResetRequest = async (email) => {
   try {
@@ -66,4 +79,4 @@ const pwReset = async (email, password) => {
   }
 };
 
-module.exports = { createUser, pwResetRequest, pwReset };
+module.exports = { createUser, pwResetRequest, pwReset, findUser };
