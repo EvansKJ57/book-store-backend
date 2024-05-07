@@ -1,7 +1,7 @@
 const mariadb = require('../db/mariadb');
 
 const getBooks = async (categoryId, newBooks, pageSize, curPage) => {
-  let sql = `SELECT *,
+  let booksQuery = `SELECT *,
       (SELECT count(*) FROM likes WHERE liked_book_id = books.id) AS likes
       FROM books
       LEFT JOIN categories
@@ -20,28 +20,28 @@ const getBooks = async (categoryId, newBooks, pageSize, curPage) => {
   }
   //sql 합치기
   if (conditions.length) {
-    sql += ` WHERE ${conditions.join(' AND ')}`;
+    booksQuery += ` WHERE ${conditions.join(' AND ')}`;
   }
 
   if (curPage && pageSize) {
     const limit = pageSize;
     const offset = limit * (curPage - 1);
-    sql += ` LIMIT ?, ?`;
+    booksQuery += ` LIMIT ?, ?`;
     values.push(offset, limit);
   }
 
-  const [results] = await mariadb.query(sql, values);
+  const [results] = await mariadb.execute(booksQuery, values);
   return results;
 };
 
 const getBooksCount = async () => {
-  let sql = `SELECT count(*) AS totalCount FROM books`;
-  const [results] = await mariadb.query(sql);
+  const countBooksQuery = `SELECT count(*) AS totalCount FROM books`;
+  const [results] = await mariadb.execute(countBooksQuery);
   return results[0];
 };
 
 const getBookDetailWithLikes = async (bookId, userId) => {
-  const sql = `SELECT *,
+  const bookDetailsWithLikesQuery = `SELECT *,
     (SELECT count(*) FROM likes WHERE liked_book_id = books.id) AS likes,
     (SELECT EXISTS(SELECT * FROM likes WHERE user_id = ? AND liked_book_id = ? )) AS liked 
     FROM books
@@ -50,7 +50,7 @@ const getBookDetailWithLikes = async (bookId, userId) => {
     WHERE books.id = ?`;
 
   const values = [userId, bookId, bookId];
-  const [results] = await mariadb.query(sql, values);
+  const [results] = await mariadb.execute(bookDetailsWithLikesQuery, values);
   return results;
 };
 

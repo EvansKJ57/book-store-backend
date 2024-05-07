@@ -1,21 +1,21 @@
 const mariadb = require('../db/mariadb');
 
 const insertData = async (user_id, delivery_id, conn) => {
-  let sql = `INSERT INTO orders (user_id, delivery_id)
+  const insertOrderQuery = `INSERT INTO orders (user_id, delivery_id)
         VALUES ( ? , ? );`;
   const values = [user_id, delivery_id];
 
   if (conn) {
-    const [results] = await conn.query(sql, values);
+    const [results] = await conn.execute(insertOrderQuery, values);
     return results;
   } else {
-    const [results] = await mariadb.query(sql, values);
+    const [results] = await mariadb.execute(insertOrderQuery, values);
     return results;
   }
 };
 
 const getOrdersByUserId = async (userId) => {
-  let sql = `SELECT
+  const selectAllOrderInfoQuery = `SELECT
       orders.id, deliveries.address, orders.created_at , deliveries.receiver,books.id AS book_id,
       books.title, books.price, books.author, order_details.qty
       FROM orders
@@ -28,8 +28,7 @@ const getOrdersByUserId = async (userId) => {
       WHERE orders.user_id = ? `;
 
   const values = [userId];
-  const [queryData] = await mariadb.query(sql, values);
-  // console.log(results);
+  const [queryData] = await mariadb.execute(selectAllOrderInfoQuery, values);
   return queryData;
 };
 module.exports = { insertData, getOrdersByUserId };

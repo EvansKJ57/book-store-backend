@@ -1,15 +1,6 @@
 const mariadb = require('../db/mariadb');
 
-const createLocal = async (email, name, requestedHashPw, salt) => {
-  let sql = `INSERT INTO users (email, name, password, salt, provider) 
-    values ( ? , ? , ? , ? , ?) `;
-
-  const values = [email, name, requestedHashPw, salt, 'LOCAL'];
-  const [results] = await mariadb.query(sql, values);
-  return results;
-};
-
-const createOauth = async (
+const createUser = async (
   email,
   name,
   requestedHashPw,
@@ -17,46 +8,51 @@ const createOauth = async (
   provider,
   provider_userId
 ) => {
-  let sql = `INSERT INTO users (email, name, password, salt, provider, provider_user_id) 
+  const insertUserQuery = `INSERT INTO users (email, name, password, salt, provider, provider_user_id) 
     values ( ? , ? , ? , ? , ? , ?) `;
-  const values = [email, name, requestedHashPw, salt, provider, provider_userId];
-  const [results] = await mariadb.query(sql, values);
+  const values = [
+    email,
+    name,
+    requestedHashPw,
+    salt,
+    provider,
+    provider_userId,
+  ];
+  const [results] = await mariadb.execute(insertUserQuery, values);
   return results;
 };
 
 const findUserById = async (userId) => {
-  let sql = `SELECT * FROM users WHERE id = ?`;
+  const selectUserByIdQuery = `SELECT * FROM users WHERE id = ?`;
   const value = [userId];
-  const [results] = await mariadb.query(sql, value);
+  const [results] = await mariadb.execute(selectUserByIdQuery, value);
   return results;
 };
 
 const findUserByEmail = async (email) => {
-  let sql = `SELECT * FROM users WHERE email = ? `;
+  const selectUserByEmailQuery = `SELECT * FROM users WHERE email = ? `;
   const values = [email];
-  const [results] = await mariadb.query(sql, values);
+  const [results] = await mariadb.execute(selectUserByEmailQuery, values);
   return results;
 };
 
 const updateToken = async (email, token) => {
-  let sql = `UPDATE users SET token = ? WHERE email = ?`;
+  const updateUserTokenQuery = `UPDATE users SET token = ? WHERE email = ?`;
   const values = [token, email];
-  const [results] = await mariadb.query(sql, values);
+  const [results] = await mariadb.execute(updateUserTokenQuery, values);
   return results;
 };
 
 const updatePw = async (requestedHashPw, salt, email) => {
-  let sql = `UPDATE users 
+  const updateUserPwQuery = `UPDATE users 
       SET password =  ? , salt = ? WHERE email = ? `;
   const values = [requestedHashPw, salt, email];
-  const [results] = await mariadb.query(sql, values);
-  console.log(results);
+  const [results] = await mariadb.execute(updateUserPwQuery, values);
   return results;
 };
 
 module.exports = {
-  createLocal,
-  createOauth,
+  createUser,
   findUserByEmail,
   findUserById,
   updatePw,

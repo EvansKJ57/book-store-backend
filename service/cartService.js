@@ -34,7 +34,7 @@ const getCarts = async (userId, selectedItems) => {
 
 const deleteCart = async (cartsId, userId) => {
   try {
-    const result = await CartsModel.deleteCart(cartsId, userId);
+    const result = await CartsModel.deleteCart([cartsId], userId);
     if (result.affectedRows === 0) {
       throw new CustomError(
         '해당 물품은 카트에 존재하지 않음',

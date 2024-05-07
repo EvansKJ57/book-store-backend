@@ -6,28 +6,21 @@ const UsersModel = require('../models/usersModel');
 
 const createUser = async (email, name, password, provider, provider_userId) => {
   try {
+    if (!provider) {
+      provider = 'LOCAL';
+    }
     const salt = crypto.randomBytes(10).toString('base64');
     const requestedHashPw = crypto
       .pbkdf2Sync(password, salt, 10000, 10, 'sha512')
       .toString('base64');
-    let results;
-    if (provider && provider_userId) {
-      results = await UsersModel.createOauth(
-        email,
-        name,
-        requestedHashPw,
-        salt,
-        provider,
-        provider_userId
-      );
-    } else {
-      results = await UsersModel.createLocal(
-        email,
-        name,
-        requestedHashPw,
-        salt
-      );
-    }
+    const results = await UsersModel.createUser(
+      email,
+      name,
+      requestedHashPw,
+      salt,
+      provider,
+      provider_userId
+    );
     return results;
   } catch (error) {
     throw new CustomError(
