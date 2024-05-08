@@ -1,8 +1,8 @@
 const mariadb = require('../db/mariadb');
 
 const getCategories = async () => {
-  let sql = `SELECT * FROM categories`;
-  const [results] = await mariadb.query(sql);
+  const getAllCategoriesQuery = `SELECT * FROM categories`;
+  const [results] = await mariadb.execute(getAllCategoriesQuery);
   return results;
 };
 

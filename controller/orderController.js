@@ -4,7 +4,6 @@ const OrderService = require('../service/orderService');
 const postOrder = async (req, res, next) => {
   try {
     const { carts, delivery } = req.body;
-    console.log(carts, delivery);
     const user = req.user;
     const results = await OrderService.postOrder(carts, delivery, user.id);
 

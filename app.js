@@ -15,6 +15,7 @@ const authRoutes = require('./routes/auth');
 
 app.use(helmet());
 
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieParser());
 dotenv.config();
