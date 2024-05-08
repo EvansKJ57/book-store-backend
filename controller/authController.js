@@ -47,7 +47,7 @@ const loginGoogle = async (req, res) => {
     res.cookie('token', rfToken, cookieOpt.rfToken);
     res.status(StatusCodes.OK).json({ email: user.email, acToken: acToken });
   } catch (error) {
-    throw error;
+    next(error);
   }
 };
 
@@ -62,7 +62,7 @@ const loginLocal = async (req, res, next) => {
     res.cookie('token', rfToken, cookieOpt.rfToken);
     res.status(StatusCodes.OK).json({ email: user.email, acToken });
   } catch (error) {
-    throw error;
+    next(error);
   }
 };
 
@@ -83,7 +83,7 @@ const reissueAcToken = async (req, res, next) => {
         error.statusCode = StatusCodes.UNAUTHORIZED;
       }
     }
-    throw error;
+    next(error);
   }
 };
 
@@ -97,9 +97,8 @@ const logout = async (req, res, next) => {
     });
     res.status(StatusCodes.OK).json({ msg: '로그아웃 성공' });
   } catch (error) {
-    throw new CustomError(
-      '로그아웃 처리중 오류',
-      StatusCodes.INTERNAL_SERVER_ERROR
+    next(
+      new CustomError('로그아웃 처리중 오류', StatusCodes.INTERNAL_SERVER_ERROR)
     );
   }
 };

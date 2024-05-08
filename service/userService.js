@@ -35,13 +35,13 @@ const createUser = async ({
 };
 const findUser = async (param) => {
   try {
-    let results;
+    let foundUser;
     if (typeof param === 'number') {
-      results = await UsersModel.findUserById(param);
+      foundUser = await UsersModel.findUserById(param);
     } else if (typeof param === 'string') {
-      results = await UsersModel.findUserByEmail(param);
+      foundUser = await UsersModel.findUserByEmail(param);
     }
-    return results;
+    return foundUser;
   } catch (error) {
     throw new CustomError('sql 오류', StatusCodes.INTERNAL_SERVER_ERROR, error);
   }
@@ -49,8 +49,8 @@ const findUser = async (param) => {
 
 const pwResetRequest = async (email) => {
   try {
-    const results = await UsersModel.findUserByEmail(email);
-    if (results.length === 0) {
+    const foundUser = await UsersModel.findUserByEmail(email);
+    if (!foundUser) {
       throw new CustomError(
         '해당 이메일이 존재 하지 않음',
         StatusCodes.UNAUTHORIZED

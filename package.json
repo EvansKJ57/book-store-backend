@@ -19,7 +19,8 @@
     "jose": "^5.2.4",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.9.3",
-    "qs": "^6.12.1"
+    "qs": "^6.12.1",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "dotenv": "^16.4.5"

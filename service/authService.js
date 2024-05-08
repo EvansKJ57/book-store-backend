@@ -3,10 +3,12 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
 const { createRemoteJWKSet, jwtVerify } = require('jose');
+const { v4: uuidv4 } = require('uuid');
 
 const CustomError = require('../util/CustomError');
 const UserService = require('../service/userService');
 const UsersModel = require('../models/usersModel');
+const TokensModel = require('../models/tokensModel');
 const generateRandomString = require('../util/generateRandomString');
 const {
   issueAccessToken,
@@ -18,8 +20,7 @@ const JWKS = createRemoteJWKSet(
 
 const loginUser = async ({ email, password, provider = 'LOCAL' }) => {
   try {
-    const results = await UsersModel.findUserByEmail(email);
-    const foundUser = results[0];
+    const foundUser = await UsersModel.findUserByEmail(email);
     // if user don't exist in db
     if (!foundUser) {
       throw new CustomError(
@@ -43,12 +44,10 @@ const loginUser = async ({ email, password, provider = 'LOCAL' }) => {
         );
       }
     }
-    const acToken = issueAccessToken(foundUser.email, foundUser.id);
-    const rfToken = issueRefreshToken(foundUser.email, foundUser.id);
-    await UsersModel.updateToken({ email: foundUser.email, token: rfToken });
-
-    console.log('로그인 시 발행된 엑세스 토큰 : ', acToken);
-    console.log('로그인 시 발행된 리프레쉬 토큰 : ', rfToken);
+    const acToken = issueAccessToken({ userId: foundUser.id });
+    const uuid = uuidv4();
+    const rfToken = issueRefreshToken({ userId: foundUser.id, uuid: uuid });
+    await TokensModel.updateToken({ userId: foundUser.id, token: uuid });
     return [foundUser, acToken, rfToken];
   } catch (error) {
     if (!error.statusCode) {
@@ -64,17 +63,16 @@ const loginUser = async ({ email, password, provider = 'LOCAL' }) => {
 
 const reissueAcToken = async (rfToken) => {
   try {
-    console.log('엑세스 토큰 재발행 시 <<리프레시>> 토큰 : ', rfToken);
-    const isVerified = jwt.verify(rfToken, process.env.JWT_RF_KEY);
-    const foundUser = await UsersModel.findUserByEmail(isVerified.email);
+    const verifiedData = jwt.verify(rfToken, process.env.JWT_RF_KEY);
+    const foundUser = await TokensModel.findTokenByUserId(verifiedData.id);
     // 디비에 유저의 리프레쉬 토큰과 요청 온 리프레쉬 토큰이 맞는지 확인
-    if (foundUser[0].token !== rfToken) {
+    if (foundUser.token !== verifiedData.uuid) {
       throw new CustomError(
         '리프레쉬 토큰 일치하지 않음',
         StatusCodes.BAD_REQUEST
       );
     }
-    const acToken = issueAccessToken(isVerified.email, isVerified.id);
+    const acToken = issueAccessToken({ userId: verifiedData.id });
     return acToken;
   } catch (error) {
     throw error;
@@ -82,10 +80,13 @@ const reissueAcToken = async (rfToken) => {
 };
 
 const logout = async (rfToken) => {
-  // 로그아웃은 페이로드만 확인해서 null값으로 초기화
-  console.log('<<로그아웃 시 rf 토큰>> : ', rfToken);
-  const decoded = jwt.decode(rfToken, process.env.JWT_RF_KEY);
-  await UsersModel.updateToken({ email: decoded.email, token: null });
+  try {
+    // 로그아웃은 페이로드만 확인해서 null값으로 초기화
+    const decoded = jwt.decode(rfToken, process.env.JWT_RF_KEY);
+    await TokensModel.updateToken({ userId: decoded.id, token: null });
+  } catch (error) {
+    throw error;
+  }
 };
 
 // ---------- Oauth 관련 --------------------
@@ -134,32 +135,36 @@ const checkIdTokenFromGoogle = async (idToken, nonce) => {
 };
 
 const registerOrLoginGoogleUser = async ({ code, nonce }) => {
-  const tokenResponse = await getAcTokenAndIdTokenFromGoogle(code);
+  try {
+    const tokenResponse = await getAcTokenAndIdTokenFromGoogle(code);
 
-  const { email, name, sub } = await checkIdTokenFromGoogle(
-    tokenResponse.data.id_token,
-    nonce
-  );
+    const { email, name, sub } = await checkIdTokenFromGoogle(
+      tokenResponse.data.id_token,
+      nonce
+    );
 
-  let foundUser = await UserService.findUser(email);
-  if (foundUser.length === 0) {
-    const createResults = await UserService.createUser({
-      email,
-      name,
-      pw: generateRandomString(8, 'base64'),
+    let foundUser = await UserService.findUser(email);
+    if (!foundUser) {
+      const createResults = await UserService.createUser({
+        email,
+        name,
+        pw: generateRandomString(8, 'base64'),
+        provider: 'GOOGLE',
+        provider_userId: sub,
+      });
+      foundUser = await UserService.findUser(createResults.insertId);
+    }
+    const { email: foundUserEmail, password } = foundUser;
+    const [user, acToken, rfToken] = await loginUser({
+      email: foundUserEmail,
+      password,
       provider: 'GOOGLE',
-      provider_userId: sub,
     });
-    foundUser = await UserService.findUser(createResults.insertId);
-  }
-  const { email: foundUserEmail, password } = foundUser[0];
-  const [user, acToken, rfToken] = await loginUser({
-    email: foundUserEmail,
-    password,
-    provider: 'GOOGLE',
-  });
 
-  return [user, acToken, rfToken];
+    return [user, acToken, rfToken];
+  } catch (error) {
+    throw error;
+  }
 };
 
 module.exports = {

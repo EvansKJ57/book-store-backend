@@ -19,21 +19,14 @@ const findUserById = async (userId) => {
   const selectUserByIdQuery = `SELECT * FROM users WHERE id = ?`;
   const value = [userId];
   const [results] = await mariadb.execute(selectUserByIdQuery, value);
-  return results;
+  return results[0];
 };
 
 const findUserByEmail = async (email) => {
   const selectUserByEmailQuery = `SELECT * FROM users WHERE email = ? `;
   const values = [email];
   const [results] = await mariadb.execute(selectUserByEmailQuery, values);
-  return results;
-};
-
-const updateToken = async ({ email, token }) => {
-  const updateUserTokenQuery = `UPDATE users SET token = ? WHERE email = ?`;
-  const values = [token, email];
-  const [results] = await mariadb.execute(updateUserTokenQuery, values);
-  return results;
+  return results[0];
 };
 
 const updatePw = async (requestedHashPw, salt, email) => {
@@ -49,5 +42,4 @@ module.exports = {
   findUserByEmail,
   findUserById,
   updatePw,
-  updateToken,
 };
