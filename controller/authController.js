@@ -10,7 +10,7 @@ const cookieOpt = require('../util/cookieOption');
 const requestGoogleOpenIDConnect = (req, res) => {
   const rootUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
   const state = generateRandomString(16); // CSRF 방지 난수
-  const nonce = generateRandomString(16); // 재생 공격 방지
+  const nonce = generateRandomString(16); // 재사용 공격 방지
   const hashedNonce = crypto.createHash('sha256').update(nonce).digest('hex');
   const optionsStringify = qs.stringify({
     response_type: 'code',
@@ -26,7 +26,7 @@ const requestGoogleOpenIDConnect = (req, res) => {
   res.redirect(`${rootUrl}?${optionsStringify}`);
 };
 
-const loginGoogle = async (req, res) => {
+const loginGoogle = async (req, res, next) => {
   try {
     const queryParse = qs.parse(req.query);
     const { state, nonce } = req.cookies;
