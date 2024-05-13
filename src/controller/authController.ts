@@ -29,7 +29,7 @@ const requestGoogleOpenIDConnect = (req: Request, res: Response) => {
 
 const loginGoogle = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { code } = req.query as { code: string };
+    const code = req.query.code as string;
     const queryState = req.query.state;
     const { state, nonce } = req.cookies;
     if (state !== queryState || !nonce) {

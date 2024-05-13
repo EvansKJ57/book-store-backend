@@ -28,7 +28,7 @@ export interface GoogleIdTokenPayload extends JwtPayload {
   name: string;
 }
 
-export interface GetBooksParamsType {
+export interface GetAllBookOptions {
   categoryId?: number;
   newBooks?: boolean;
   pageSize?: number;
@@ -41,15 +41,15 @@ export interface Delivery {
   contact: string;
 }
 
-export interface BookDataType {
+export type BookDataType = {
   id: number;
   title: string;
   price: number;
   author: string;
   qty: number;
-}
+};
 
-export interface BookDetailData {
+export type BookDetailData = {
   id: number;
   title: string;
   img: number;
@@ -68,9 +68,9 @@ export interface BookDetailData {
   categoryName: string;
   category_id?: number;
   category_name?: string;
-}
+};
 
-export interface OrderResData {
+export type OrderResData = {
   [key: string]: {
     orderId: number;
     address: string;
@@ -80,4 +80,4 @@ export interface OrderResData {
     totalQty: number;
     orderedBooks: BookDataType[];
   };
-}
+};

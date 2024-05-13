@@ -27,7 +27,7 @@ const findUserById = async (userId: number) => {
     selectUserByIdQuery,
     value
   );
-  return results[0] as FoundUser;
+  return results[0];
 };
 
 const findUserByEmail = async (email: string) => {
@@ -37,7 +37,7 @@ const findUserByEmail = async (email: string) => {
     selectUserByEmailQuery,
     values
   );
-  return results[0] as FoundUser;
+  return results[0];
 };
 
 const updatePw = async (

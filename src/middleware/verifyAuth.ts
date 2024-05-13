@@ -23,7 +23,7 @@ const verifyAuth = (req: Request, res: Response, next: NextFunction) => {
       throw new CustomError('적절한 토큰 타입이 아님', StatusCodes.BAD_REQUEST);
     }
     const isVerified = jwt.verify(token, process.env.JWT_AC_KEY);
-    req.user = isVerified as { id: number; email?: string } & JwtPayload;
+    req.user = isVerified;
     next();
   } catch (error: any) {
     if (!error.statusCode) {

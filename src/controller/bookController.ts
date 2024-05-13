@@ -1,21 +1,20 @@
 import { StatusCodes } from 'http-status-codes';
 import BookService from '../service/bookService';
-import { JwtPayload } from 'jsonwebtoken';
 import { NextFunction, Request, Response } from 'express';
-import { GetBooksParamsType } from '../types/customTypes';
+import { GetAllBookOptions } from '../types/customTypes';
 
 //(카테고리 별, 신간) 전체 도서 목록 조회
 const getAllBooks = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { categoryId, newBooks, pageSize, curPage } =
-      req.query as GetBooksParamsType;
+    const { categoryId, newBooks, pageSize, curPage }: GetAllBookOptions =
+      req.query;
 
-    const results = await BookService.getBooks(
+    const results = await BookService.getBooks({
       categoryId,
       newBooks,
       pageSize,
-      curPage
-    );
+      curPage,
+    });
 
     res.status(StatusCodes.OK).json(results);
   } catch (error) {
@@ -29,7 +28,7 @@ const getBookDetail = async (
   next: NextFunction
 ) => {
   try {
-    const user = req.user as { id: number; email?: string } & JwtPayload;
+    const user = req.user;
     const bookId = Number(req.params.bookId);
     const results = await BookService.getBookDetail(bookId, user.id);
     res.status(StatusCodes.OK).json(results);

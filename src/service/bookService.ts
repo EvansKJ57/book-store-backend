@@ -1,17 +1,18 @@
 import { StatusCodes } from 'http-status-codes';
 import CustomError from '../util/CustomError';
 import booksModel from '../models/booksModel';
+import { BookDetailData, GetAllBookOptions } from '../types/customTypes';
 
-const getBooks = async (
-  categoryId?: number,
-  newBooks?: boolean,
-  pageSize?: number,
-  curPage?: number
-) => {
+const getBooks = async ({
+  categoryId,
+  newBooks,
+  pageSize,
+  curPage,
+}: GetAllBookOptions) => {
   try {
     //도서 조회 && 전체 도서 권 수 조회 병렬 처리
     const [bookList, totalCount] = await Promise.all([
-      booksModel.getBooks(categoryId, newBooks, pageSize, curPage),
+      booksModel.getBooks({ categoryId, newBooks, pageSize, curPage }),
       booksModel.getBooksCount(),
     ]);
     if (bookList.length === 0) {

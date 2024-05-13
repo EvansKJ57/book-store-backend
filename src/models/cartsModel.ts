@@ -30,10 +30,7 @@ const getCart = async (userId: number, selectedItems: number[]) => {
     getCartsQuery += ` WHERE ${concat}`;
   }
 
-  const [results] = await mariadb.execute<RowDataPacket[]>(
-    getCartsQuery,
-    values
-  );
+  const [results] = await mariadb.execute(getCartsQuery, values);
   return results;
 };
 

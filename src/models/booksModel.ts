@@ -1,13 +1,17 @@
-import { RowDataPacket } from 'mysql2';
+import { QueryResult, RowDataPacket } from 'mysql2';
 import mariadb from '../db/mariadb';
-import { BookDetailData } from '../types/customTypes';
+import {
+  BookDataType,
+  BookDetailData,
+  GetAllBookOptions,
+} from '../types/customTypes';
 
-const getBooks = async (
-  categoryId?: number,
-  newBooks?: boolean,
-  pageSize?: number,
-  curPage?: number
-) => {
+const getBooks = async ({
+  categoryId,
+  newBooks,
+  pageSize,
+  curPage,
+}: GetAllBookOptions) => {
   let booksQuery = `SELECT *,
       (SELECT count(*) FROM likes WHERE liked_book_id = books.id) AS likes
       FROM books

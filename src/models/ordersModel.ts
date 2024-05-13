@@ -40,10 +40,7 @@ const getOrdersByUserId = async (userId: number) => {
       WHERE orders.user_id = ? `;
 
   const values = [userId];
-  const [queryData] = await mariadb.execute<RowDataPacket[]>(
-    selectAllOrderInfoQuery,
-    values
-  );
+  const [queryData] = await mariadb.execute(selectAllOrderInfoQuery, values);
   return queryData;
 };
 export default { insertData, getOrdersByUserId };
