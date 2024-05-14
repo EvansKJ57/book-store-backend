@@ -1,17 +1,13 @@
-import { QueryResult, RowDataPacket } from 'mysql2';
+import { RowDataPacket } from 'mysql2';
 import mariadb from '../db/mariadb';
-import {
-  BookDataType,
-  BookDetailData,
-  GetAllBookOptions,
-} from '../types/customTypes';
+import { IBookDetailData, IGetAllBookOptions } from '../types/customTypes';
 
 const getBooks = async ({
   categoryId,
   newBooks,
   pageSize,
   curPage,
-}: GetAllBookOptions) => {
+}: IGetAllBookOptions) => {
   let booksQuery = `SELECT *,
       (SELECT count(*) FROM likes WHERE liked_book_id = books.id) AS likes
       FROM books
@@ -40,9 +36,12 @@ const getBooks = async ({
     booksQuery += ` LIMIT ?, ?`;
     values.push(offset, limit);
   }
-  const [results] = await mariadb.execute(booksQuery, values);
+  const [results] = await mariadb.execute<IBookDetailData[]>(
+    booksQuery,
+    values
+  );
 
-  return results as BookDetailData[];
+  return results;
 };
 
 const getBooksCount = async () => {
@@ -61,8 +60,11 @@ const getBookDetailWithLikes = async (bookId: number, userId: number) => {
     WHERE books.id = ?`;
 
   const values = [userId, bookId, bookId];
-  const [results] = await mariadb.execute(bookDetailsWithLikesQuery, values);
-  return results as BookDetailData[];
+  const [results] = await mariadb.execute<IBookDetailData[]>(
+    bookDetailsWithLikesQuery,
+    values
+  );
+  return results;
 };
 
 export default { getBooks, getBooksCount, getBookDetailWithLikes };

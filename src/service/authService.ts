@@ -11,9 +11,9 @@ import TokensModel from '../models/tokensModel';
 import generateRandomString from '../util/generateRandomString';
 import { issueAccessToken, issueRefreshToken } from '../util/token/issueToken';
 import {
-  CustomJwtPayload,
-  FoundUser,
-  GoogleIdTokenPayload,
+  ICustomJwtPayload,
+  IFoundUser,
+  IGoogleIdTokenPayload,
 } from '../types/customTypes';
 
 const JWKS = createRemoteJWKSet(
@@ -28,7 +28,7 @@ const loginUser = async ({
   email: string;
   password: string;
   provider?: string;
-}): Promise<[FoundUser, string, string]> => {
+}): Promise<[IFoundUser, string, string]> => {
   try {
     const foundUser = await UsersModel.findUserByEmail(email);
     // if user don't exist in db
@@ -76,7 +76,7 @@ const reissueAcToken = async (rfToken: string) => {
     const verifiedData = jwt.verify(
       rfToken,
       process.env.JWT_RF_KEY
-    ) as CustomJwtPayload;
+    ) as ICustomJwtPayload;
     const foundUser = await TokensModel.findTokenByUserId(verifiedData.id);
     // 디비에 유저의 리프레쉬 토큰과 요청 온 리프레쉬 토큰이 맞는지 확인
     if (foundUser.token !== verifiedData.uuid) {
@@ -95,7 +95,7 @@ const reissueAcToken = async (rfToken: string) => {
 const logout = async (rfToken: string) => {
   try {
     // 로그아웃은 페이로드만 확인해서 null값으로 초기화
-    const decoded = jwt.decode(rfToken) as CustomJwtPayload;
+    const decoded = jwt.decode(rfToken) as ICustomJwtPayload;
     await TokensModel.updateToken({ userId: decoded.id, token: null });
   } catch (error) {
     throw error;
@@ -131,7 +131,7 @@ const checkIdTokenFromGoogle = async (idToken: string, nonce: string) => {
       issuer: 'https://accounts.google.com',
       audience: process.env.GOOGLE_CLIENT_ID,
       maxTokenAge: 60 * 5, // 5 minutes
-    })) as { payload: GoogleIdTokenPayload };
+    })) as { payload: IGoogleIdTokenPayload };
 
     const expectedNonce = crypto
       .createHash('sha256')
@@ -153,7 +153,7 @@ const registerOrLoginGoogleUser = async ({
 }: {
   code: string;
   nonce: string;
-}): Promise<[FoundUser, string, string]> => {
+}): Promise<[IFoundUser, string, string]> => {
   try {
     const tokenResponse = await getAcTokenAndIdTokenFromGoogle(code);
 
@@ -162,18 +162,16 @@ const registerOrLoginGoogleUser = async ({
       nonce
     );
 
-    let foundUser = (await UserService.findUser(email)) as FoundUser;
+    let foundUser = await UserService.findUser(email);
     if (!foundUser) {
       const createResults = await UserService.createUser({
         email,
         name,
-        pw: generateRandomString(8, 'base64'),
+        password: generateRandomString(8, 'base64'),
         provider: 'GOOGLE',
         provider_userId: sub,
       });
-      foundUser = (await UserService.findUser(
-        createResults.insertId
-      )) as FoundUser;
+      foundUser = await UserService.findUser(createResults.insertId);
     }
 
     const [user, acToken, rfToken] = await loginUser({

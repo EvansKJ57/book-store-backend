@@ -1,5 +1,5 @@
 import mariadb from '../db/mariadb';
-import { PoolConnection, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
+import { PoolConnection, ResultSetHeader } from 'mysql2/promise';
 
 const addToCart = async (userId: number, bookId: number, qty: number) => {
   const insertCartQuery = `INSERT INTO carts (user_id, book_id, qty) VALUES (?, ?, ?)`;

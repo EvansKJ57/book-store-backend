@@ -4,11 +4,11 @@ import DeliveriesModel from '../deliveriesModel';
 import OrdersModel from '../ordersModel';
 import OrderDetailsModel from '../orderDetailsModel';
 import CartsModel from '../cartsModel';
-import { Delivery } from '../../types/customTypes';
+import { IDelivery } from '../../types/customTypes';
 
 const postOrderTransaction = async (
   carts: number[],
-  delivery: Delivery,
+  delivery: IDelivery,
   userId: number
 ) => {
   const conn = await mariadb.getConnection();

@@ -1,4 +1,4 @@
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { StatusCodes } from 'http-status-codes';
 import CustomError from '../util/CustomError';
 import { NextFunction, Request, Response } from 'express';

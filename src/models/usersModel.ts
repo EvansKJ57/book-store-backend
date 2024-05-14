@@ -1,18 +1,18 @@
 import mariadb from '../db/mariadb';
-import { FoundUser, LoginUser } from '../types/customTypes';
-import { ResultSetHeader, RowDataPacket } from 'mysql2/promise';
+import { IFoundUser, ILoginUser } from '../types/customTypes';
+import { ResultSetHeader } from 'mysql2/promise';
 
 const createUser = async ({
   email,
   name,
-  pw,
+  password,
   salt,
   provider = 'LOCAL',
   provider_userId = null,
-}: LoginUser) => {
+}: ILoginUser) => {
   const insertUserQuery = `INSERT INTO users (email, name, password, salt, provider, provider_user_id) 
     values ( ? , ? , ? , ? , ? , ?) `;
-  const values = [email, name, pw, salt, provider, provider_userId];
+  const values = [email, name, password, salt, provider, provider_userId];
   const [results] = await mariadb.execute<ResultSetHeader>(
     insertUserQuery,
     values
@@ -23,17 +23,16 @@ const createUser = async ({
 const findUserById = async (userId: number) => {
   const selectUserByIdQuery = `SELECT * FROM users WHERE id = ?`;
   const value = [userId];
-  const [results] = await mariadb.execute<RowDataPacket[]>(
+  const [results] = await mariadb.execute<IFoundUser[]>(
     selectUserByIdQuery,
     value
   );
   return results[0];
 };
-
 const findUserByEmail = async (email: string) => {
   const selectUserByEmailQuery = `SELECT * FROM users WHERE email = ? `;
   const values = [email];
-  const [results] = await mariadb.execute<RowDataPacket[]>(
+  const [results] = await mariadb.execute<IFoundUser[]>(
     selectUserByEmailQuery,
     values
   );

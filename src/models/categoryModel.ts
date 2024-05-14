@@ -1,9 +1,9 @@
-import { RowDataPacket } from 'mysql2/promise';
+import { RowDataPacket } from 'mysql2';
 import mariadb from '../db/mariadb';
 
 const getCategories = async () => {
   const getAllCategoriesQuery = `SELECT * FROM categories`;
-  const [results] = await mariadb.execute(getAllCategoriesQuery);
+  const [results] = await mariadb.execute<RowDataPacket[]>(getAllCategoriesQuery);
   return results;
 };
 

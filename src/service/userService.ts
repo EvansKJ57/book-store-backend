@@ -3,24 +3,24 @@ import crypto from 'crypto';
 
 import CustomError from '../util/CustomError';
 import UsersModel from '../models/usersModel';
-import { LoginUser } from '../types/customTypes';
+import { IFoundUser, ILoginUser } from '../types/customTypes';
 
 const createUser = async ({
   email,
   name,
-  pw,
+  password,
   provider = 'LOCAL',
   provider_userId = null,
-}: LoginUser) => {
+}: ILoginUser) => {
   try {
     const salt = crypto.randomBytes(10).toString('base64');
     const requestedHashPw = crypto
-      .pbkdf2Sync(pw, salt, 10000, 10, 'sha512')
+      .pbkdf2Sync(password, salt, 10000, 10, 'sha512')
       .toString('base64');
     const results = await UsersModel.createUser({
       email,
       name,
-      pw: requestedHashPw,
+      password: requestedHashPw,
       salt,
       provider,
       provider_userId,
@@ -36,10 +36,11 @@ const createUser = async ({
 };
 const findUser = async (param: string | number) => {
   try {
-    let foundUser;
+    let foundUser: IFoundUser;
     if (typeof param === 'number') {
       foundUser = await UsersModel.findUserById(param);
-    } else if (typeof param === 'string') {
+    } else {
+      // (typeof param === 'string')
       foundUser = await UsersModel.findUserByEmail(param);
     }
     return foundUser;

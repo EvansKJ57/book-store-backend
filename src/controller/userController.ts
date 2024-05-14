@@ -5,7 +5,7 @@ import { NextFunction, Request, Response } from 'express';
 const create = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, name, password } = req.body;
-    const results = await UserService.createUser({ email, name, pw: password });
+    const results = await UserService.createUser({ email, name, password });
     res.status(StatusCodes.CREATED).json(results);
   } catch (error) {
     next(error);

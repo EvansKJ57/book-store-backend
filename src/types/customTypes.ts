@@ -1,55 +1,45 @@
-import { JwtPayload } from 'jsonwebtoken';
+import { RowDataPacket } from 'mysql2';
+import jwt from 'jsonwebtoken';
 
-export interface LoginUser {
+export interface ILoginUser {
   email: string;
   name: string;
-  pw: string;
+  password: string;
   salt?: string;
   provider?: string;
   provider_userId?: string | null;
 }
 
-export interface FoundUser {
+export interface IFoundUser extends ILoginUser, RowDataPacket {
   id: number;
-  email: string;
-  name: string;
-  password: string;
   salt: string;
   provider: string;
-  provider_userId?: string | null;
+  provider_userId: string;
 }
 
-export interface CustomJwtPayload extends JwtPayload {
+export interface ICustomJwtPayload extends jwt.JwtPayload {
   userId: number;
 }
 
-export interface GoogleIdTokenPayload extends JwtPayload {
+export interface IGoogleIdTokenPayload extends jwt.JwtPayload {
   email: string;
   name: string;
 }
 
-export interface GetAllBookOptions {
+export interface IGetAllBookOptions {
   categoryId?: number;
   newBooks?: boolean;
   pageSize?: number;
   curPage?: number;
 }
 
-export interface Delivery {
+export interface IDelivery {
   address: string;
   receiver: string;
   contact: string;
 }
 
-export type BookDataType = {
-  id: number;
-  title: string;
-  price: number;
-  author: string;
-  qty: number;
-};
-
-export type BookDetailData = {
+export interface IBookDetailData extends RowDataPacket {
   id: number;
   title: string;
   img: number;
@@ -68,9 +58,27 @@ export type BookDetailData = {
   categoryName: string;
   category_id?: number;
   category_name?: string;
+}
+
+export type TBookDataType = {
+  id: number;
+  title: string;
+  price: number;
+  author: string;
+  qty: number;
 };
 
-export type OrderResData = {
+export interface IOrderQueryData extends RowDataPacket {
+  orderId: number;
+  address: string;
+  createdAt: string;
+  receiver: string;
+  totalPrice: number;
+  totalQty: number;
+  orderedBooks: TBookDataType[];
+}
+
+export interface IOrderResData {
   [key: string]: {
     orderId: number;
     address: string;
@@ -78,6 +86,6 @@ export type OrderResData = {
     receiver: string;
     totalPrice: number;
     totalQty: number;
-    orderedBooks: BookDataType[];
+    orderedBooks: TBookDataType[];
   };
-};
+}

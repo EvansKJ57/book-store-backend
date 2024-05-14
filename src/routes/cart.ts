@@ -14,7 +14,7 @@ router.get('/', cartController.getCarts);
 
 router.delete(
   '/:cartId',
-  // [cartIdParamsCheck, validationRequest],
+  [...cartIdParamsCheck, validationRequest],
   cartController.removeCartItem
 );
 

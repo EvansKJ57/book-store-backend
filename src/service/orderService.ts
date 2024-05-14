@@ -1,12 +1,12 @@
 import { StatusCodes } from 'http-status-codes';
 import CustomError from '../util/CustomError';
-import { Delivery, OrderResData } from '../types/customTypes';
+import { IDelivery, IOrderResData } from '../types/customTypes';
 import OrdersModel from '../models/ordersModel';
 import postOrderTransaction from '../models/transaction/postOrderTransaction';
 
 const postOrder = async (
   carts: number[],
-  delivery: Delivery,
+  delivery: IDelivery,
   userId: number
 ) => {
   try {
@@ -28,7 +28,7 @@ const postOrder = async (
 const getOrdersByUserId = async (userId: number) => {
   try {
     const ordersData = await OrdersModel.getOrdersByUserId(userId);
-    const dataMap: OrderResData = {};
+    const dataMap: IOrderResData = {};
     ordersData.forEach((order) => {
       if (!dataMap[order.id]) {
         dataMap[order.id] = {

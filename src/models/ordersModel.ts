@@ -1,6 +1,7 @@
 import { ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 import mariadb from '../db/mariadb';
 import { PoolConnection } from 'mysql2/promise';
+import { IOrderQueryData } from '../types/customTypes';
 
 const insertData = async (
   user_id: number,
@@ -40,7 +41,10 @@ const getOrdersByUserId = async (userId: number) => {
       WHERE orders.user_id = ? `;
 
   const values = [userId];
-  const [queryData] = await mariadb.execute(selectAllOrderInfoQuery, values);
+  const [queryData] = await mariadb.execute<IOrderQueryData[]>(
+    selectAllOrderInfoQuery,
+    values
+  );
   return queryData;
 };
 export default { insertData, getOrdersByUserId };
