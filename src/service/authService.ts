@@ -23,11 +23,11 @@ const JWKS = createRemoteJWKSet(
 const loginUser = async ({
   email,
   password,
-  provider = 'LOCAL',
+  provider,
 }: {
   email: string;
   password: string;
-  provider?: string;
+  provider: string;
 }): Promise<[IFoundUser, string, string]> => {
   try {
     const foundUser = await UsersModel.findUserByEmail(email);
@@ -164,14 +164,14 @@ const registerOrLoginGoogleUser = async ({
 
     let foundUser = await UserService.findUser(email);
     if (!foundUser) {
-      const createResults = await UserService.createUser({
+      const createdUserId = await UserService.createUser({
         email,
         name,
         password: generateRandomString(8, 'base64'),
         provider: 'GOOGLE',
         provider_userId: sub,
       });
-      foundUser = await UserService.findUser(createResults.insertId);
+      foundUser = await UserService.findUser(createdUserId);
     }
 
     const [user, acToken, rfToken] = await loginUser({

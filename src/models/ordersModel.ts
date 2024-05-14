@@ -6,25 +6,17 @@ import { IOrderQueryData } from '../types/customTypes';
 const insertData = async (
   user_id: number,
   delivery_id: number,
-  conn?: PoolConnection
+  conn: PoolConnection
 ) => {
   const insertOrderQuery = `INSERT INTO orders (user_id, delivery_id)
         VALUES ( ? , ? );`;
   const values = [user_id, delivery_id];
 
-  if (conn) {
-    const [results] = await conn.execute<ResultSetHeader>(
-      insertOrderQuery,
-      values
-    );
-    return results;
-  } else {
-    const [results] = await mariadb.execute<ResultSetHeader>(
-      insertOrderQuery,
-      values
-    );
-    return results;
-  }
+  const [results] = await conn.execute<ResultSetHeader>(
+    insertOrderQuery,
+    values
+  );
+  return results;
 };
 
 const getOrdersByUserId = async (userId: number) => {

@@ -7,25 +7,17 @@ const insertData = async (
     receiver,
     contact,
   }: { address: string; receiver: string; contact: string },
-  conn?: PoolConnection
+  conn: PoolConnection
 ) => {
   const InsertDeliveryQuery = `INSERT INTO deliveries (address, receiver, contact)
         VALUES (?, ?, ?)`;
   let values = [address, receiver, contact];
 
-  if (conn) {
-    const [results] = await conn.execute<ResultSetHeader>(
-      InsertDeliveryQuery,
-      values
-    );
-    return results;
-  } else {
-    const [results] = await mariadb.execute<ResultSetHeader>(
-      InsertDeliveryQuery,
-      values
-    );
-    return results;
-  }
+  const [results] = await conn.execute<ResultSetHeader>(
+    InsertDeliveryQuery,
+    values
+  );
+  return results;
 };
 
 export default { insertData };

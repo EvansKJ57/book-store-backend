@@ -3,29 +3,30 @@ import crypto from 'crypto';
 
 import CustomError from '../util/CustomError';
 import UsersModel from '../models/usersModel';
-import { IFoundUser, ILoginUser } from '../types/customTypes';
+import { IFoundUser, ISubmittedUSerData } from '../types/customTypes';
+import { createUserTransaction } from '../models/transaction/createUserTransaction';
 
 const createUser = async ({
   email,
-  name,
   password,
+  name,
   provider = 'LOCAL',
   provider_userId = null,
-}: ILoginUser) => {
+}: ISubmittedUSerData) => {
   try {
     const salt = crypto.randomBytes(10).toString('base64');
     const requestedHashPw = crypto
       .pbkdf2Sync(password, salt, 10000, 10, 'sha512')
       .toString('base64');
-    const results = await UsersModel.createUser({
+    const createdUserId = await createUserTransaction({
       email,
       name,
-      password: requestedHashPw,
-      salt,
       provider,
       provider_userId,
+      password: requestedHashPw,
+      salt: salt,
     });
-    return results;
+    return createdUserId as number;
   } catch (error: any) {
     throw new CustomError(
       '유저 생성 오류',

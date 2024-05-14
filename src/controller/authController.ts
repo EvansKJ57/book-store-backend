@@ -59,6 +59,7 @@ const loginLocal = async (req: Request, res: Response, next: NextFunction) => {
     const [user, acToken, rfToken] = await authService.loginUser({
       email,
       password,
+      provider: 'LOCAL',
     });
     // 엑세스 토큰은 json으로 res, 리프레쉬 토큰은 쿠키에 담아서  res
     res.cookie('token', rfToken, cookieOpt.rfToken);

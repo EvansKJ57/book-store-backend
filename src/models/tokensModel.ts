@@ -1,12 +1,20 @@
-import { RowDataPacket } from 'mysql2/promise';
+import { RowDataPacket, ResultSetHeader, PoolConnection } from 'mysql2/promise';
 import mariadb from '../db/mariadb';
 
-// insertData, deleteData가 없는 이유 : users에 트리거 설정해서 유저 생성/삭제 시 자동으로 토큰테이블 데이터 생성/삭제
+const insertTokenData = async (userId: number, conn: PoolConnection) => {
+  const insertTokenQuery = `INSERT INTO tokens (user_id) VALUES ( ? )`;
+  const values = [userId];
+  const [results] = await conn.execute<ResultSetHeader>(
+    insertTokenQuery,
+    values
+  );
+  return results;
+};
 
 const findTokenByUserId = async (userId: number) => {
   const selectTokenQuery = `SELECT * FROM tokens WHERE user_id = ?`;
   const values = [userId];
-  const [results]: any = await mariadb.execute<RowDataPacket[]>(
+  const [results] = await mariadb.execute<RowDataPacket[]>(
     selectTokenQuery,
     values
   );
@@ -26,4 +34,4 @@ const updateToken = async ({
   return results;
 };
 
-export default { findTokenByUserId, updateToken };
+export default { insertTokenData, findTokenByUserId, updateToken };

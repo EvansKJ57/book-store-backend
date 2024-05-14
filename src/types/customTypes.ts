@@ -1,20 +1,21 @@
 import { RowDataPacket } from 'mysql2';
 import jwt from 'jsonwebtoken';
 
-export interface ILoginUser {
+export interface ISubmittedUSerData {
   email: string;
   name: string;
   password: string;
-  salt?: string;
   provider?: string;
   provider_userId?: string | null;
 }
-
-export interface IFoundUser extends ILoginUser, RowDataPacket {
-  id: number;
+export interface IUserDataWithoutId extends ISubmittedUSerData {
   salt: string;
   provider: string;
-  provider_userId: string;
+  provider_userId: string | null;
+}
+
+export interface IFoundUser extends IUserDataWithoutId, RowDataPacket {
+  id: number;
 }
 
 export interface ICustomJwtPayload extends jwt.JwtPayload {
