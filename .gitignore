@@ -37,6 +37,6 @@ logs
 *.sw?
 
 ####
-
+dist/
 md-memo-doc/
 *.sql
