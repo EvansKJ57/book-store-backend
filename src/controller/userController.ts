@@ -2,8 +2,13 @@ import { StatusCodes } from 'http-status-codes';
 import UserService from '../service/userService';
 import { NextFunction, Request, Response } from 'express';
 import CustomError from '../util/CustomError';
+import { ICreateUserReqBody } from '../types/ReqRelatedType';
 
-const create = async (req: Request, res: Response, next: NextFunction) => {
+const create = async (
+  req: Request<{}, {}, ICreateUserReqBody>,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { email, name, password } = req.body;
     const foundUser = await UserService.findUser(email);

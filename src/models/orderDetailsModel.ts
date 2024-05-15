@@ -1,5 +1,4 @@
 import { PoolConnection, ResultSetHeader } from 'mysql2/promise';
-import mariadb from '../db/mariadb';
 
 const insertData = async (
   order_id: number,

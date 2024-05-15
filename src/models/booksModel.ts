@@ -1,13 +1,14 @@
 import { RowDataPacket } from 'mysql2';
 import mariadb from '../db/mariadb';
-import { IBookDetailData, IGetAllBookOptions } from '../types/customTypes';
+import { IBookDetailData } from '../types/customTypes';
+import { IBookOptionQuery } from '../types/ReqRelatedType';
 
 const getBooks = async ({
   categoryId,
   newBooks,
   pageSize,
   curPage,
-}: IGetAllBookOptions) => {
+}: IBookOptionQuery) => {
   let booksQuery = `SELECT *,
       (SELECT count(*) FROM likes WHERE liked_book_id = books.id) AS likes
       FROM books

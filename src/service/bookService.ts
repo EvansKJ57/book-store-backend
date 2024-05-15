@@ -1,18 +1,13 @@
 import { StatusCodes } from 'http-status-codes';
 import CustomError from '../util/CustomError';
 import booksModel from '../models/booksModel';
-import { IGetAllBookOptions } from '../types/customTypes';
+import { IBookOptionQuery } from '../types/ReqRelatedType';
 
-const getBooks = async ({
-  categoryId,
-  newBooks,
-  pageSize,
-  curPage,
-}: IGetAllBookOptions) => {
+const getBooks = async (bookQueryOpt: IBookOptionQuery) => {
   try {
     //도서 조회 && 전체 도서 권 수 조회 병렬 처리
     const [bookList, totalCount] = await Promise.all([
-      booksModel.getBooks({ categoryId, newBooks, pageSize, curPage }),
+      booksModel.getBooks(bookQueryOpt),
       booksModel.getBooksCount(),
     ]);
     if (bookList.length === 0) {
@@ -31,7 +26,7 @@ const getBooks = async ({
         return changedPropertyData;
       }),
       pageNation: {
-        curPage: Number(curPage),
+        curPage: bookQueryOpt.curPage,
         ...totalCount,
       },
     };

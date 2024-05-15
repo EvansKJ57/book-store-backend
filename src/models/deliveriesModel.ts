@@ -1,12 +1,8 @@
-import mariadb from '../db/mariadb';
 import { PoolConnection, ResultSetHeader } from 'mysql2/promise';
+import { IDelivery } from '../types/customTypes';
 
 const insertData = async (
-  {
-    address,
-    receiver,
-    contact,
-  }: { address: string; receiver: string; contact: string },
+  { address, receiver, contact }: IDelivery,
   conn: PoolConnection
 ) => {
   const InsertDeliveryQuery = `INSERT INTO deliveries (address, receiver, contact)

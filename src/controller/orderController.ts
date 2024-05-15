@@ -1,8 +1,13 @@
 import { StatusCodes } from 'http-status-codes';
 import OrderService from '../service/orderService';
 import { NextFunction, Request, Response } from 'express';
+import { IOrderReqBody } from '../types/ReqRelatedType';
 
-const postOrder = async (req: Request, res: Response, next: NextFunction) => {
+const postOrder = async (
+  req: Request<{}, {}, IOrderReqBody>,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { carts, delivery } = req.body;
     const user = req.user;

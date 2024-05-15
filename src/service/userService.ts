@@ -3,8 +3,9 @@ import crypto from 'crypto';
 
 import CustomError from '../util/CustomError';
 import UsersModel from '../models/usersModel';
-import { IFoundUser, ISubmittedUSerData } from '../types/customTypes';
+import { IFoundUser } from '../types/customTypes';
 import { createUserTransaction } from '../models/transaction/createUserTransaction';
+import { ICreateUserReqBody } from '../types/ReqRelatedType';
 
 const createUser = async ({
   email,
@@ -12,7 +13,10 @@ const createUser = async ({
   name,
   provider = 'LOCAL',
   provider_userId = null,
-}: ISubmittedUSerData) => {
+}: ICreateUserReqBody & {
+  provider?: string;
+  provider_userId?: string | null;
+}) => {
   try {
     const salt = crypto.randomBytes(10).toString('base64');
     const requestedHashPw = crypto

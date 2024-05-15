@@ -1,4 +1,4 @@
-import { ResultSetHeader, RowDataPacket } from 'mysql2/promise';
+import { ResultSetHeader } from 'mysql2/promise';
 import mariadb from '../db/mariadb';
 import { PoolConnection } from 'mysql2/promise';
 import { IOrderQueryData } from '../types/customTypes';

@@ -1,14 +1,8 @@
 import { RowDataPacket } from 'mysql2';
 import jwt from 'jsonwebtoken';
+import { ICreateUserReqBody } from './ReqRelatedType';
 
-export interface ISubmittedUSerData {
-  email: string;
-  name: string;
-  password: string;
-  provider?: string;
-  provider_userId?: string | null;
-}
-export interface IUserDataWithoutId extends ISubmittedUSerData {
+export interface IUserDataWithoutId extends ICreateUserReqBody {
   salt: string;
   provider: string;
   provider_userId: string | null;
@@ -25,13 +19,6 @@ export interface ICustomJwtPayload extends jwt.JwtPayload {
 export interface IGoogleIdTokenPayload extends jwt.JwtPayload {
   email: string;
   name: string;
-}
-
-export interface IGetAllBookOptions {
-  categoryId?: number;
-  newBooks?: boolean;
-  pageSize?: number;
-  curPage?: number;
 }
 
 export interface IDelivery {

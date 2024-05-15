@@ -1,14 +1,16 @@
 import { StatusCodes } from 'http-status-codes';
 import BookService from '../service/bookService';
-import { NextFunction, Request, Response } from 'express';
-import { IGetAllBookOptions } from '../types/customTypes';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
+import { IBookOptionQuery } from '../types/ReqRelatedType';
 
 //(카테고리 별, 신간) 전체 도서 목록 조회
-const getAllBooks = async (req: Request, res: Response, next: NextFunction) => {
+const getAllBooks = async (
+  req: Request<{}, {}, {}, IBookOptionQuery>,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const { categoryId, newBooks, pageSize, curPage }: IGetAllBookOptions =
-      req.query;
-
+    const { categoryId, newBooks, pageSize, curPage } = req.query;
     const results = await BookService.getBooks({
       categoryId,
       newBooks,

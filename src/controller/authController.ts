@@ -7,6 +7,7 @@ import authService from './../service/authService';
 import generateRandomString from '../util/generateRandomString';
 import cookieOpt from '../util/cookieOption';
 import { NextFunction, Request, Response } from 'express';
+import { ILoginUserReqBody } from '../types/ReqRelatedType';
 
 const requestGoogleOpenIDConnect = (req: Request, res: Response) => {
   const rootUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
@@ -55,7 +56,7 @@ const loginGoogle = async (req: Request, res: Response, next: NextFunction) => {
 
 const loginLocal = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { email, password }: { email: string; password: string } = req.body;
+    const { email, password }: ILoginUserReqBody = req.body;
     const [user, acToken, rfToken] = await authService.loginUser({
       email,
       password,

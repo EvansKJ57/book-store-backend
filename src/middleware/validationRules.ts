@@ -16,15 +16,15 @@ const userValidatorConfig = {
     .isString(),
 };
 
-const bookIdParamsCheck = [param('bookId').isNumeric().toInt()];
+const bookIdParamsCheck = [param('bookId').isNumeric()];
 
-const cartIdParamsCheck = [param('cartId').isNumeric().toInt()];
+const cartIdParamsCheck = [param('cartId').isNumeric()];
 
 const bookQueryCheck = [
-  query('categoryId').optional().isInt().toInt(),
+  query('categoryId').optional().isInt(),
   query('newBooks').optional().isBoolean().toBoolean(),
-  query('curPage').optional().isInt().toInt(),
-  query('pageSize').optional().isInt().toInt(),
+  query('curPage').optional().isInt(),
+  query('pageSize').optional().isInt(),
 ];
 
 const deliveryBodyCheck = [

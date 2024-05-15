@@ -16,10 +16,6 @@ import {
   IGoogleIdTokenPayload,
 } from '../types/customTypes';
 
-const JWKS = createRemoteJWKSet(
-  new URL('https://www.googleapis.com/oauth2/v3/certs')
-);
-
 const loginUser = async ({
   email,
   password,
@@ -127,6 +123,9 @@ const getAcTokenAndIdTokenFromGoogle = async (code: string) => {
 
 const checkIdTokenFromGoogle = async (idToken: string, nonce: string) => {
   try {
+    const JWKS = createRemoteJWKSet(
+      new URL('https://www.googleapis.com/oauth2/v3/certs')
+    );
     const { payload } = (await jwtVerify(idToken, JWKS, {
       issuer: 'https://accounts.google.com',
       audience: process.env.GOOGLE_CLIENT_ID,
