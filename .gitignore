@@ -37,6 +37,8 @@ logs
 *.sw?
 
 ####
+cert/
+*.pem
 dist/
 md-memo-doc/
 *.sql

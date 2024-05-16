@@ -1,6 +1,7 @@
 declare namespace NodeJS {
   interface ProcessEnv {
-    PORT: number;
+    HTTP_PORT: string;
+    HTTPS_PORT: string;
     MYSQL_HOST: string;
     MYSQL_USER: string;
     MYSQL_PW: string;
@@ -10,5 +11,7 @@ declare namespace NodeJS {
     GOOGLE_REDIRECT_URI: string;
     GOOGLE_CLIENT_ID: string;
     GOOGLE_CLIENT_SECRET: string;
+    SSL_KEY: string;
+    SSL_CERT: string;
   }
 }

@@ -7,6 +7,7 @@ const cookieOpt: { [key: string]: CookieOptions } = {
   },
   rfToken: {
     httpOnly: true,
+    secure: true,
     maxAge: 86400000, // 세션쿠키가 아닌 영속 쿠키로 만들기, 하루 유지 옵션 설정
   },
 };
