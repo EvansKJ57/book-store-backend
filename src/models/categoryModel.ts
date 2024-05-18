@@ -1,10 +1,13 @@
-import { RowDataPacket } from 'mysql2';
 import mariadb from '../db/mariadb';
+import { ICategoryQueryData } from '../types/customTypes';
 
-const getCategories = async () => {
-  const getAllCategoriesQuery = `SELECT * FROM categories`;
-  const [results] = await mariadb.execute<RowDataPacket[]>(getAllCategoriesQuery);
-  return results;
+const CategoryModel = {
+  getCategories: async () => {
+    const getAllCategoriesQuery = `SELECT * FROM categories`;
+    const [results] = await mariadb.execute<ICategoryQueryData[]>(
+      getAllCategoriesQuery
+    );
+    return results;
+  },
 };
-
-export default { getCategories };
+export default CategoryModel;

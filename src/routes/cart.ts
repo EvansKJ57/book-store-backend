@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import cartController from '../controller/cartController';
+import CartController from '../controller/cartController';
 import { cartIdParamsCheck } from '../middleware/validationRules';
 import validationRequest from '../middleware/validateRequest';
 import verifyAuth from '../middleware/verifyAuth';
@@ -8,14 +8,14 @@ const router = Router();
 
 router.use(verifyAuth);
 
-router.post('/', cartController.addToCart);
+router.post('/', CartController.addToCart);
 
-router.get('/', cartController.getCarts);
+router.get('/', CartController.getCarts);
 
 router.delete(
   '/:cartId',
   [...cartIdParamsCheck, validationRequest],
-  cartController.removeCartItem
+  CartController.removeCartItem
 );
 
 export default router;

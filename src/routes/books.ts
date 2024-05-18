@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import bookController from '../controller/bookController';
+import BookController from '../controller/bookController';
 import {
   bookIdParamsCheck,
   bookQueryCheck,
@@ -13,12 +13,12 @@ router.use(verifyAuth);
 router.get(
   '/',
   [...bookQueryCheck, validationRequest],
-  bookController.getAllBooks
+  BookController.getAllBooks
 );
 router.get(
   '/:bookId',
   [...bookIdParamsCheck, validationRequest],
-  bookController.getBookDetail
+  BookController.getBookDetail
 );
 
 export default router;

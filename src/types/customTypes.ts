@@ -26,6 +26,10 @@ export interface IDelivery {
   receiver: string;
   contact: string;
 }
+export interface ICategoryQueryData extends RowDataPacket {
+  category_id: number;
+  category_name: string;
+}
 
 export interface IBookDetailData extends RowDataPacket {
   id: number;

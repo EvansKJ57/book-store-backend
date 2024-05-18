@@ -3,7 +3,7 @@ import { IUserDataWithoutId } from '../../types/customTypes';
 import tokensModel from '../tokensModel';
 import usersModel from '../usersModel';
 
-export const createUserTransaction = async (userData: IUserDataWithoutId) => {
+const createUserTransaction = async (userData: IUserDataWithoutId) => {
   const conn = await mariadb.getConnection();
   try {
     await conn.beginTransaction();
@@ -18,3 +18,5 @@ export const createUserTransaction = async (userData: IUserDataWithoutId) => {
     conn.release();
   }
 };
+
+export default createUserTransaction;

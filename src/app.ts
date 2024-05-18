@@ -1,6 +1,5 @@
 import express, { Application } from 'express';
 import fs from 'fs';
-import http from 'http';
 import https from 'https';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
@@ -41,17 +40,19 @@ app.use('/auth', authRoutes);
 //에러 핸들러
 app.use(errorHandler);
 
+//http
+app.listen(process.env.HTTP_PORT, () => {
+  console.log(`HTTP Server is running on port ${process.env.HTTP_PORT}`);
+});
+
+//https
 const httpsOptions = {
   key: fs.readFileSync(process.env.SSL_KEY),
   cert: fs.readFileSync(process.env.SSL_CERT),
 };
 
 const httpsServer = https.createServer(httpsOptions, app);
-const httpServer = http.createServer(app);
 
 httpsServer.listen(process.env.HTTPS_PORT, () => {
   console.log(`HTTPS Server is running on port ${process.env.HTTPS_PORT}`);
-});
-httpServer.listen(process.env.HTTP_PORT, () => {
-  console.log(`HTTP Server is running on port ${process.env.HTTP_PORT}`);
 });

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import likeController from '../controller/likeController';
+import LikeController from '../controller/likeController';
 import { bookIdParamsCheck } from '../middleware/validationRules';
 import validationRequest from '../middleware/validateRequest';
 import verifyAuth from '../middleware/verifyAuth';
@@ -11,13 +11,13 @@ router.use(verifyAuth);
 router.post(
   '/:bookId',
   [...bookIdParamsCheck, validationRequest],
-  likeController.addLike
+  LikeController.addLike
 );
 
 router.delete(
   '/:bookId',
   [...bookIdParamsCheck, validationRequest],
-  likeController.removeLike
+  LikeController.removeLike
 );
 
 export default router;

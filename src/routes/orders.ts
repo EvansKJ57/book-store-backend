@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import orderController from '../controller/orderController';
+import OrderController from '../controller/orderController';
 import { deliveryBodyCheck } from '../middleware/validationRules';
 import validationRequest from '../middleware/validateRequest';
 import verifyAuth from '../middleware/verifyAuth';
@@ -11,9 +11,9 @@ router.use(verifyAuth);
 router.post(
   '/',
   [...deliveryBodyCheck, validationRequest],
-  orderController.postOrder
+  OrderController.postOrder
 );
 
-router.get('/', orderController.getOrders);
+router.get('/', OrderController.getOrders);
 
 export default router;

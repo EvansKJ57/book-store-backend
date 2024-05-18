@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { userValidatorConfig } from '../middleware/validationRules';
 import validateRequest from '../middleware/validateRequest';
-import userController from '../controller/userController';
+import UserController from '../controller/userController';
 const router = Router();
 
 router.post(
@@ -12,19 +12,19 @@ router.post(
     userValidatorConfig.password,
     validateRequest,
   ],
-  userController.create
+  UserController.create
 );
 
 router.post(
   '/reset',
   [userValidatorConfig.email, validateRequest],
-  userController.pwResetRequest
+  UserController.pwResetRequest
 );
 
 router.put(
   '/reset',
   [userValidatorConfig.email, userValidatorConfig.password, validateRequest],
-  userController.pwReset
+  UserController.pwReset
 );
 
 export default router;
