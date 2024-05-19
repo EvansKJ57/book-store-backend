@@ -2,12 +2,12 @@ import { StatusCodes } from 'http-status-codes';
 import CustomError from '../util/CustomError';
 import { IDelivery, IOrderResData } from '../types/customTypes';
 import OrdersModel from '../models/ordersModel';
-import postOrderTransaction from '../models/transaction/postOrderTransaction';
+import TransactionModel from '../models/transactionModel';
 
 const OrderService = {
   postOrder: async (carts: number[], delivery: IDelivery, userId: number) => {
     try {
-      const results = await postOrderTransaction(carts, delivery, userId);
+      const results = await TransactionModel.postOrder(carts, delivery, userId);
       return results;
     } catch (error: any) {
       if (!error.StatusCodes) {

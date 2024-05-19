@@ -4,8 +4,8 @@ import crypto from 'crypto';
 import CustomError from '../util/CustomError';
 import UsersModel from '../models/usersModel';
 import { IFoundUser } from '../types/customTypes';
-import createUserTransaction from '../models/transaction/createUserTransaction';
 import { ICreateUserReqBody } from '../types/ReqRelatedType';
+import TransactionModel from '../models/transactionModel';
 
 const UserService = {
   createUser: async ({
@@ -23,7 +23,7 @@ const UserService = {
       const requestedHashPw = crypto
         .pbkdf2Sync(password, salt, 10000, 10, 'sha512')
         .toString('base64');
-      const createdUserId = await createUserTransaction({
+      const createdUserId = await TransactionModel.createUser({
         email,
         name,
         provider,
@@ -31,7 +31,7 @@ const UserService = {
         password: requestedHashPw,
         salt: salt,
       });
-      return createdUserId as number;
+      return createdUserId;
     } catch (error: any) {
       throw new CustomError(
         '유저 생성 오류',
