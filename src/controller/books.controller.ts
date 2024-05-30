@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Post } from '@nestjs/common';
-import { BooksService } from './books.service';
+import { BooksService } from '../service/books.service';
 
 @Controller('books')
 export class BooksController {
@@ -10,7 +10,6 @@ export class BooksController {
    */
   @Post()
   async generateTestData() {
-    console.log('dkfjla');
     return this.booksService.generateTestBooks();
   }
 

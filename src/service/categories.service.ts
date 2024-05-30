@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CategoriesModel } from 'src/entities/categories.entity';
 import { mockCategoryData } from 'src/entities/mock-data/mockCategory';
+import { CategoryModel } from 'src/entities/category.entity';
 
 @Injectable()
 export class CategoriesService {
   constructor(
-    @InjectRepository(CategoriesModel)
-    private readonly categoryRepository: Repository<CategoriesModel>,
+    @InjectRepository(CategoryModel)
+    private readonly categoryRepository: Repository<CategoryModel>,
   ) {}
 
   async insertMock() {

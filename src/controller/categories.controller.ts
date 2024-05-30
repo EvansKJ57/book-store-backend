@@ -1,16 +1,18 @@
 import { Controller, Get, Post } from '@nestjs/common';
-import { CategoriesService } from './categories.service';
+import { CategoriesService } from '../service/categories.service';
 
 @Controller('category')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
-  @Get()
-  getAll() {
-    return this.categoriesService.getAll();
-  }
+  /** 초기 목 데이터 저장 */
   @Post()
   insertMockData() {
     return this.categoriesService.insertMock();
+  }
+
+  @Get()
+  getAll() {
+    return this.categoriesService.getAll();
   }
 }
