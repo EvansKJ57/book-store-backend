@@ -1,5 +1,4 @@
 import {
-  AfterLoad,
   Column,
   Entity,
   JoinTable,
@@ -53,14 +52,7 @@ export class BookModel {
   })
   category: CategoryModel;
 
-  @ManyToMany(() => UserModel, (user) => user.likes)
+  @ManyToMany(() => UserModel, (user) => user.likes, { eager: true })
   @JoinTable()
   liked: UserModel[];
-
-  likesCounts: number;
-
-  @AfterLoad()
-  countLikes() {
-    return (this.likesCounts = this.liked ? this.liked.length : 0);
-  }
 }

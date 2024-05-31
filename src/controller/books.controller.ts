@@ -19,7 +19,7 @@ export class BooksController {
     return this.booksService.getBooks();
   }
   @Get(':id')
-  async getBookDetail(@Param('id') bookId: string) {
-    return this.booksService.getBookDetail(+bookId);
+  async getBookDetail(@Param('id') bookId: number) {
+    return this.booksService.getBookDetail(bookId);
   }
 }

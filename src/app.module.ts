@@ -5,7 +5,7 @@ import { BooksModule } from './moduels/books.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CategoriesModule } from './moduels/categories.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { AuthModule } from './moduels/auth.module';
+import { AuthModule } from './auth/auth.module';
 import { BookModel } from './entities/book.entity';
 import { UserModel } from './entities/user.entity';
 import { CategoryModel } from './entities/category.entity';

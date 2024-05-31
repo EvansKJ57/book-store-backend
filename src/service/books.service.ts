@@ -44,7 +44,11 @@ export class BooksService {
     }
     const books = data.map((book) => {
       const { category, ...rest } = book;
-      return { ...rest, category: category.categoryName };
+      return {
+        ...rest,
+        category: category.categoryName,
+        likes: book.liked.length,
+      };
     });
     return books;
   }

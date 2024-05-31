@@ -66,4 +66,31 @@ export class AuthService {
       expiresIn: isRfToken ? rf_time : ac_time,
     });
   }
+
+  verifyToken(token: string) {
+    try {
+      const { type } = this.jwtService.decode(token);
+      let secretKey;
+      if (type === 'rf') {
+        secretKey = this.configService.get<string>('jwt.refresh');
+      } else {
+        secretKey = this.configService.get<string>('jwt.access');
+      }
+      const verifiedPayload = this.jwtService.verify(token, {
+        secret: secretKey,
+      });
+      return verifiedPayload;
+    } catch (error) {
+      throw new UnauthorizedException('토큰이 만료됐거나 잘못된 토큰');
+    }
+  }
+
+  extractTokenFromHeader(header: string) {
+    const splitToken = header.split(' ');
+    if (splitToken.length !== 2 || splitToken[0].toLowerCase() !== 'bearer') {
+      throw new UnauthorizedException('잘못된 토큰');
+    }
+    const token = splitToken[1];
+    return token;
+  }
 }
