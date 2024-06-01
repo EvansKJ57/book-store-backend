@@ -1,9 +1,9 @@
-import { Body, Controller, Headers, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateUserDto } from 'src/dtos/create-user.dto';
 import { RefreshTokenGuard } from './guard/bearToken.guard';
 import { UserModel } from 'src/entities/user.entity';
 import { User } from 'src/decorator/user.decorator';
+import { CreateUserDto } from 'src/dtos/req/user.req.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -21,11 +21,8 @@ export class AuthController {
 
   @Post('token/reissue')
   @UseGuards(RefreshTokenGuard)
-  generateNewAccessToken(
-    @Headers('authorization') rawToken: string,
-    @User() user: UserModel,
-  ) {
+  generateNewAccessToken(@User() user: UserModel) {
     const newToken = this.authService.signToken(user, false);
-    return { accessToken: newToken };
+    return { acToken: newToken };
   }
 }

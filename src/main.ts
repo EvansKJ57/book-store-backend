@@ -7,6 +7,7 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
+      transformOptions: { excludeExtraneousValues: true },
     }),
   );
   await app.listen(8080);

@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
 import { BooksService } from '../service/books.service';
 
 @Controller('books')
@@ -19,7 +19,7 @@ export class BooksController {
     return this.booksService.getBooks();
   }
   @Get(':id')
-  async getBookDetail(@Param('id') bookId: number) {
+  async getBookDetail(@Param('id', ParseIntPipe) bookId: number) {
     return this.booksService.getBookDetail(bookId);
   }
 }

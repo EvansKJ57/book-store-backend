@@ -7,6 +7,7 @@ import { CategoryModel } from 'src/entities/category.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([BookModel, CategoryModel])],
+  exports: [BooksService],
   controllers: [BooksController],
   providers: [BooksService],
 })

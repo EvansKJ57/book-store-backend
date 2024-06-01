@@ -8,6 +8,8 @@ import { Repository } from 'typeorm';
 import { mockBooksData } from '../entities/mock-data/mockBook';
 import { BookModel } from 'src/entities/book.entity';
 import { CategoryModel } from 'src/entities/category.entity';
+import { BookResDto, BookSummaryResDto } from 'src/dtos/res/book.res.dto';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class BooksService {
@@ -38,27 +40,27 @@ export class BooksService {
   }
 
   async getBooks() {
-    const data = await this.bookRepository.find();
-    if (!data) {
+    const books = await this.bookRepository.find();
+    if (!books) {
       throw new NotFoundException('도서 없음');
     }
-    const books = data.map((book) => {
-      const { category, ...rest } = book;
-      return {
-        ...rest,
-        category: category.categoryName,
-        likes: book.liked.length,
-      };
-    });
-    return books;
+
+    const booksDto = books.map((book) =>
+      plainToInstance(BookSummaryResDto, book),
+    );
+
+    return booksDto;
   }
 
-  async getBookDetail(id: number) {
-    const findBooks = await this.bookRepository.findOneBy({ id });
-    if (!findBooks) {
+  async getBookDetail(bookId: number) {
+    const foundBook = await this.bookRepository.findOne({
+      where: { id: bookId },
+    });
+    if (!foundBook) {
       throw new NotFoundException('해당 도서 없음');
     }
-    const { category, ...rest } = findBooks;
-    return { ...rest, category: category.categoryName };
+
+    const bookDetail = plainToInstance(BookResDto, foundBook);
+    return bookDetail;
   }
 }

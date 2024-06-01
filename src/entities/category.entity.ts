@@ -5,6 +5,6 @@ export class CategoryModel {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'category_name' })
-  categoryName: string;
+  @Column()
+  name: string;
 }

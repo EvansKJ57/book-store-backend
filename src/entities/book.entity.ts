@@ -4,10 +4,13 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { UserModel } from './user.entity';
 import { CategoryModel } from './category.entity';
+import { CartModel } from './cart.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class BookModel {
@@ -47,11 +50,15 @@ export class BookModel {
   @Column('date', { name: 'pub_date' })
   pubDate: Date;
 
-  @ManyToOne(() => CategoryModel, (category) => category.id, {
-    eager: true,
-  })
+  @Exclude()
+  @ManyToOne(() => CategoryModel, (category) => category.id, { eager: true })
   category: CategoryModel;
 
+  @Exclude()
+  @OneToMany(() => CartModel, (cart) => cart.book)
+  carts: CartModel[];
+
+  @Exclude()
   @ManyToMany(() => UserModel, (user) => user.likes, { eager: true })
   @JoinTable()
   liked: UserModel[];

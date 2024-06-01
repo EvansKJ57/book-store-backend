@@ -1,4 +1,11 @@
-import { Controller, Delete, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Param,
+  ParseIntPipe,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { AccessTokenGuard } from 'src/auth/guard/bearToken.guard';
 import { User } from 'src/decorator/user.decorator';
 import { LikesService } from 'src/service/likes.service';
@@ -9,13 +16,19 @@ export class LikesController {
 
   @Post(':id')
   @UseGuards(AccessTokenGuard)
-  addLike(@Param('id') bookId: number, @User('id') userId: number) {
+  addLike(
+    @Param('id', ParseIntPipe) bookId: number,
+    @User('id') userId: number,
+  ) {
     return this.likesService.addLike({ bookId, userId });
   }
 
   @Delete(':id')
   @UseGuards(AccessTokenGuard)
-  deleteLike(@Param('id') bookId: number, @User('id') userId: number) {
+  deleteLike(
+    @Param('id', ParseIntPipe) bookId: number,
+    @User('id') userId: number,
+  ) {
     return this.likesService.removeLike({ bookId, userId });
   }
 }

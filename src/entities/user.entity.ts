@@ -1,6 +1,13 @@
 import { Exclude } from 'class-transformer';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToMany,
+  OneToMany,
+} from 'typeorm';
 import { BookModel } from './book.entity';
+import { CartModel } from './cart.entity';
 
 export enum TProvider {
   local = 'LOCAL',
@@ -21,6 +28,9 @@ export class UserModel {
   @Column()
   @Exclude({ toPlainOnly: true })
   password: string;
+
+  @OneToMany(() => CartModel, (cart) => cart.user)
+  carts: CartModel[];
 
   @ManyToMany(() => BookModel, (book) => book.liked)
   likes: BookModel[];
