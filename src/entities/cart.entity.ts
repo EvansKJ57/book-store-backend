@@ -8,7 +8,6 @@ import {
 } from 'typeorm';
 import { UserModel } from './user.entity';
 import { BookModel } from './book.entity';
-import { Exclude } from 'class-transformer';
 
 export type TCartStatus = 'active' | 'purchased' | 'removed';
 
@@ -20,13 +19,11 @@ export class CartModel {
   @Column()
   qty: number;
 
-  @Exclude()
   @ManyToOne(() => UserModel, (user) => user.carts, {
     cascade: true,
   })
   user: UserModel;
 
-  @Exclude()
   @ManyToOne(() => BookModel, (book) => book.carts, {
     cascade: true,
   })

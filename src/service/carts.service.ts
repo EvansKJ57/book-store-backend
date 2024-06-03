@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CartModel } from 'src/entities/cart.entity';
 import { Repository } from 'typeorm';
 import { BookModel } from 'src/entities/book.entity';
-import { CreateCartDto } from 'src/dtos/req/cart.req.dto';
 import { plainToInstance } from 'class-transformer';
-import { CartsResDto } from 'src/dtos/res/cart.res.dto';
+import { UserModel } from 'src/entities/user.entity';
+import { CartsResDto, CreateCartDto } from 'src/dtos/cart.dto';
 
 @Injectable()
 export class CartsService {
@@ -15,7 +15,8 @@ export class CartsService {
     @InjectRepository(BookModel)
     private readonly bookRepository: Repository<BookModel>,
   ) {}
-  async create(dto: CreateCartDto, user) {
+
+  async create(dto: CreateCartDto, user: UserModel) {
     const book = await this.bookRepository.findOne({
       where: { id: dto.bookId },
     });
@@ -42,9 +43,23 @@ export class CartsService {
     return carts;
   }
 
-  findOne() {}
-
   update() {}
 
-  remove() {}
+  async remove(cartId: number) {
+    const foundCart = await this.cartRepository.findOne({
+      where: {
+        id: cartId,
+      },
+    });
+
+    if (!foundCart) {
+      throw new BadRequestException('해당 카트는 존재하지 않음');
+    }
+    const softRemoved = this.cartRepository.create({
+      ...foundCart,
+      status: 'removed',
+    });
+    const result = await this.cartRepository.save(softRemoved);
+    return { cartId: result.id, msg: '카트 정상 삭제됨' };
+  }
 }

@@ -8,8 +8,8 @@ import { Repository } from 'typeorm';
 import { mockBooksData } from '../entities/mock-data/mockBook';
 import { BookModel } from 'src/entities/book.entity';
 import { CategoryModel } from 'src/entities/category.entity';
-import { BookResDto, BookSummaryResDto } from 'src/dtos/res/book.res.dto';
 import { plainToInstance } from 'class-transformer';
+import { BookResDto, BookSummaryResDto } from 'src/dtos/book.dto';
 
 @Injectable()
 export class BooksService {
@@ -41,7 +41,7 @@ export class BooksService {
 
   async getBooks() {
     const books = await this.bookRepository.find();
-    if (!books) {
+    if (books.length === 0) {
       throw new NotFoundException('도서 없음');
     }
 
@@ -59,8 +59,7 @@ export class BooksService {
     if (!foundBook) {
       throw new NotFoundException('해당 도서 없음');
     }
-
-    const bookDetail = plainToInstance(BookResDto, foundBook);
-    return bookDetail;
+    const bookDto = plainToInstance(BookResDto, foundBook);
+    return bookDto;
   }
 }

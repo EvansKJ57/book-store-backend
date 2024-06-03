@@ -1,9 +1,18 @@
-import { Controller, Post, Body, UseGuards, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Get,
+  Delete,
+  Param,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { CartsService } from '../service/carts.service';
 import { AccessTokenGuard } from 'src/auth/guard/bearToken.guard';
 import { User } from 'src/decorator/user.decorator';
 import { UserModel } from 'src/entities/user.entity';
-import { CreateCartDto } from 'src/dtos/req/cart.req.dto';
+import { CreateCartDto } from 'src/dtos/cart.dto';
 
 @Controller('carts')
 export class CartsController {
@@ -18,5 +27,11 @@ export class CartsController {
   @UseGuards(AccessTokenGuard)
   getCarts(@User('id') userId: number) {
     return this.cartsService.findAll(userId);
+  }
+
+  @Delete(':id')
+  @UseGuards(AccessTokenGuard)
+  removeCart(@Param('id', ParseIntPipe) cartId: number) {
+    return this.cartsService.remove(cartId);
   }
 }

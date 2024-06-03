@@ -21,7 +21,7 @@ export class BearerTokenGuard implements CanActivate {
       throw new BadRequestException('토큰 없음');
     }
     const token = this.authService.extractTokenFromHeader(authHeader);
-    const payload = this.authService.verifyToken(token);
+    const payload = await this.authService.verifyToken(token);
 
     const user = await this.userService.getUserByEmail(payload.email);
 
@@ -37,7 +37,7 @@ export class AccessTokenGuard extends BearerTokenGuard {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     await super.canActivate(context);
     const req = context.switchToHttp().getRequest();
-    if (req.tokenType !== 'ac') {
+    if (req.tokenType !== 'ac' && req.user && req.token) {
       throw new UnauthorizedException('엑세스 토큰이 아님');
     }
     return true;
@@ -49,7 +49,7 @@ export class RefreshTokenGuard extends BearerTokenGuard {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     await super.canActivate(context);
     const req = context.switchToHttp().getRequest();
-    if (req.tokenType !== 'rf') {
+    if (req.tokenType !== 'rf' && req.user && req.token) {
       throw new UnauthorizedException('리프레쉬 토큰이 아님');
     }
     return true;

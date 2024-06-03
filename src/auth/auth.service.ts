@@ -4,7 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { UserModel } from 'src/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { CreateUserDto } from 'src/dtos/req/user.req.dto';
+import { CreateUserDto } from 'src/dtos/user.dto';
 
 @Injectable()
 export class AuthService {
@@ -67,26 +67,29 @@ export class AuthService {
     });
   }
 
-  verifyToken(token: string) {
+  async verifyToken(token: string) {
     try {
       const { type } = this.jwtService.decode(token);
+
       let secretKey;
       if (type === 'rf') {
         secretKey = this.configService.get<string>('jwt.refresh');
       } else {
         secretKey = this.configService.get<string>('jwt.access');
       }
-      const verifiedPayload = this.jwtService.verify(token, {
+
+      const verifiedPayload = await this.jwtService.verify(token, {
         secret: secretKey,
       });
       return verifiedPayload;
     } catch (error) {
+      console.log(error);
       throw new UnauthorizedException('토큰이 만료됐거나 잘못된 토큰');
     }
   }
 
-  extractTokenFromHeader(header: string) {
-    const splitToken = header.split(' ');
+  extractTokenFromHeader(authHeader: string) {
+    const splitToken = authHeader.split(' ');
     if (splitToken.length !== 2 || splitToken[0].toLowerCase() !== 'bearer') {
       throw new UnauthorizedException('잘못된 토큰');
     }

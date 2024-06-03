@@ -1,9 +1,16 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Headers,
+  Post,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RefreshTokenGuard } from './guard/bearToken.guard';
 import { UserModel } from 'src/entities/user.entity';
 import { User } from 'src/decorator/user.decorator';
-import { CreateUserDto } from 'src/dtos/req/user.req.dto';
+import { CreateUserDto } from 'src/dtos/user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -21,7 +28,16 @@ export class AuthController {
 
   @Post('token/reissue')
   @UseGuards(RefreshTokenGuard)
-  generateNewAccessToken(@User() user: UserModel) {
+  async generateNewAccessToken(
+    @User() user: UserModel,
+    @Headers('authorization') authHeader: string,
+  ) {
+    const rfToken = this.authService.extractTokenFromHeader(authHeader);
+
+    const isVerified = await this.authService.verifyToken(rfToken);
+    if (!isVerified) {
+      throw new UnauthorizedException('토큰만료, 다시 로그인하세요');
+    }
     const newToken = this.authService.signToken(user, false);
     return { acToken: newToken };
   }

@@ -1,10 +1,8 @@
-import { ClassSerializerInterceptor, Module } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Module } from '@nestjs/common';
 import { UsersModule } from './moduels/users.module';
 import { BooksModule } from './moduels/books.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CategoriesModule } from './moduels/categories.module';
-import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
 import { BookModel } from './entities/book.entity';
 import { UserModel } from './entities/user.entity';
@@ -39,11 +37,6 @@ import { CartsModule } from './moduels/carts.module';
     AuthModule,
     LikesModule,
     CartsModule,
-  ],
-
-  providers: [
-    AppService,
-    { provide: APP_INTERCEPTOR, useClass: ClassSerializerInterceptor },
   ],
 })
 export class AppModule {}

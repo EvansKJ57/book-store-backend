@@ -2,6 +2,8 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserModel } from 'src/entities/user.entity';
+import { CreateUserDto, FoundUserResDto } from 'src/dtos/user.dto';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class UsersService {
@@ -12,11 +14,16 @@ export class UsersService {
   // ----------------
   async getUsers() {
     const users = await this.userRepository.find();
-    return users;
+
+    const userResDto = users.map((user) =>
+      plainToInstance(FoundUserResDto, user),
+    );
+
+    return userResDto;
   }
   // ----------------
 
-  async createUser(data: Pick<UserModel, 'email' | 'password' | 'nickname'>) {
+  async createUser(data: CreateUserDto) {
     const emailExist = await this.userRepository.exists({
       where: { email: data.email },
     });
@@ -33,7 +40,8 @@ export class UsersService {
 
     const userObj = this.userRepository.create(data);
     const newUser = this.userRepository.save(userObj);
-    return newUser;
+
+    return plainToInstance(FoundUserResDto, newUser);
   }
 
   async getUserByEmail(email: string) {

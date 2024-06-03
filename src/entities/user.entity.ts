@@ -1,4 +1,3 @@
-import { Exclude } from 'class-transformer';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -26,7 +25,6 @@ export class UserModel {
   nickname: string;
 
   @Column()
-  @Exclude({ toPlainOnly: true })
   password: string;
 
   @OneToMany(() => CartModel, (cart) => cart.user)

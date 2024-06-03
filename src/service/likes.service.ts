@@ -36,7 +36,8 @@ export class LikesService {
       liked: [...book.liked, user],
     });
 
-    return this.bookRepository.save(addLikeBook);
+    const result = await this.bookRepository.save(addLikeBook);
+    return { bookId: result.id, msg: '좋아요 추가 완료' };
   }
 
   async removeLike({ bookId, userId }) {
@@ -58,6 +59,7 @@ export class LikesService {
       ...book,
       liked: removedList,
     });
-    return this.bookRepository.save(updateBook);
+    const result = await this.bookRepository.save(updateBook);
+    return { bookid: result.id, msg: '좋아요 삭제 완료' };
   }
 }
