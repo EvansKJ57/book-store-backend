@@ -1,6 +1,6 @@
-import { NestFactory, Reflector } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -8,13 +8,10 @@ async function bootstrap() {
     new ValidationPipe({
       transform: true,
       transformOptions: {
-        excludeExtraneousValues: true,
+        enableImplicitConversion: true,
       },
-    }),
-  );
-  app.useGlobalInterceptors(
-    new ClassSerializerInterceptor(app.get(Reflector), {
-      excludeExtraneousValues: true,
+      whitelist: true, // DTO에 정의되지 않은 속성 제거
+      forbidNonWhitelisted: true, // DTO에 정의되지 않은 속성이 있으면 에러 발생
     }),
   );
   await app.listen(8080);

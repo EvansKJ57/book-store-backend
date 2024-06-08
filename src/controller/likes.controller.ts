@@ -25,10 +25,11 @@ export class LikesController {
 
   @Delete(':id')
   @UseGuards(AccessTokenGuard)
-  deleteLike(
+  async deleteLike(
     @Param('id', ParseIntPipe) bookId: number,
     @User('id') userId: number,
   ) {
-    return this.likesService.removeLike({ bookId, userId });
+    await this.likesService.removeLike({ bookId, userId });
+    return { bookId, msg: `해당 도서 좋아요 삭제 완료` };
   }
 }

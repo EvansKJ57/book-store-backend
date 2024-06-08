@@ -1,39 +1,32 @@
 import { PickType } from '@nestjs/mapped-types';
-import { Expose, Transform } from 'class-transformer';
+import { Expose } from 'class-transformer';
 import { IsNotEmpty, IsNumber } from 'class-validator';
 import { CartModel } from 'src/entities/cart.entity';
 
 export class CreateCartDto extends PickType(CartModel, ['qty'] as const) {
+  @Expose()
   @IsNotEmpty()
   @IsNumber()
-  @Expose()
   bookId: number;
 
+  @Expose()
   @IsNotEmpty()
   @IsNumber()
-  @Expose()
   qty: number;
 }
 
-export class CartsResDto extends PickType(CartModel, [
-  'id',
-  'qty',
-  'updatedAt',
-] as const) {
-  @Expose()
-  id: number;
+export class CartsResDto {
+  readonly id: number;
+  readonly qty: number;
+  readonly updatedAt: Date;
+  readonly bookId: number;
+  readonly userId: number;
 
-  @Expose()
-  qty: number;
-
-  @Expose()
-  updatedAt: Date;
-
-  @Expose()
-  @Transform(({ obj }) => obj.book.id, { toClassOnly: true })
-  bookId: number;
-
-  @Expose()
-  @Transform(({ obj }) => obj.user.id, { toClassOnly: true })
-  userId: number;
+  constructor(data: CartModel) {
+    this.id = data.id;
+    this.qty = data.qty;
+    this.updatedAt = data.updatedAt;
+    this.bookId = data.bookId;
+    this.userId = data.userId;
+  }
 }

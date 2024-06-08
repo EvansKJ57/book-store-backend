@@ -10,15 +10,16 @@ import { AuthService } from './auth.service';
 import { RefreshTokenGuard } from './guard/bearToken.guard';
 import { UserModel } from 'src/entities/user.entity';
 import { User } from 'src/decorator/user.decorator';
-import { CreateUserDto } from 'src/dtos/user.dto';
+import { CreateUserDto, UserResDto } from 'src/dtos/user.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register/email')
-  createUser(@Body() body: CreateUserDto) {
-    return this.authService.registerWithEmail(body);
+  async createUser(@Body() body: CreateUserDto) {
+    const newUser = await this.authService.registerWithEmail(body);
+    return new UserResDto(newUser);
   }
 
   @Post('login/email')

@@ -12,6 +12,7 @@ import { ConfigModule } from '@nestjs/config';
 import configuration from './config/configuration';
 import { CartModel } from './entities/cart.entity';
 import { CartsModule } from './moduels/carts.module';
+import { LikeModel } from './entities/like.entity';
 
 @Module({
   imports: [
@@ -28,7 +29,7 @@ import { CartsModule } from './moduels/carts.module';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [BookModel, UserModel, CategoryModel, CartModel],
+      entities: [BookModel, UserModel, CategoryModel, CartModel, LikeModel],
       synchronize: true, // 자동연동 여부, 프로덕션 환경에서는 false로 한다.
     }),
     UsersModule,

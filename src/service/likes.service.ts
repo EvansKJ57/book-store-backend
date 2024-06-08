@@ -1,65 +1,49 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BookModel } from 'src/entities/book.entity';
-import { UserModel } from 'src/entities/user.entity';
+import { LikeModel } from 'src/entities/like.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class LikesService {
   constructor(
-    @InjectRepository(BookModel)
-    private readonly bookRepository: Repository<BookModel>,
-    @InjectRepository(UserModel)
-    private readonly userRepository: Repository<UserModel>,
+    @InjectRepository(LikeModel)
+    private readonly likeRepository: Repository<LikeModel>,
   ) {}
+
   async addLike({ bookId, userId }) {
-    const book = await this.bookRepository.findOne({
-      where: { id: bookId },
+    const isAlreadyLiked = await this.likeRepository.find({
+      where: {
+        userId,
+        bookId,
+      },
     });
-
-    if (!book) {
-      throw new BadRequestException('해당 도서 없음');
-    }
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-    });
-
-    const isAlreadyLike = book.liked.find(
-      (likedUser) => likedUser.id === userId,
-    );
-    if (isAlreadyLike) {
-      throw new BadRequestException('이미 좋아요 누름');
+    if (isAlreadyLiked.length) {
+      throw new BadRequestException('이미 좋아요 되어있음');
     }
 
-    const addLikeBook = this.bookRepository.create({
-      ...book,
-      liked: [...book.liked, user],
-    });
-
-    const result = await this.bookRepository.save(addLikeBook);
-    return { bookId: result.id, msg: '좋아요 추가 완료' };
+    const result = await this.likeRepository.save({ bookId, userId });
+    return result;
   }
 
   async removeLike({ bookId, userId }) {
-    const book = await this.bookRepository.findOne({
+    const isLiked = await this.likeRepository.find({
       where: {
-        id: bookId,
+        userId,
+        bookId,
       },
     });
-    if (!book) {
-      throw new BadRequestException('해당 도서 없음');
+    if (!isLiked.length) {
+      throw new BadRequestException('이미 좋아요 안되어 있음');
     }
-    const removedList = book.liked.filter(
-      (likedUser) => likedUser.id !== userId,
-    );
-    if (book.liked.length === removedList.length) {
-      throw new BadRequestException('좋아요 안 되어 있음');
+    const result = await this.likeRepository.delete({ bookId, userId });
+    if (result.affected === 0) {
+      throw new InternalServerErrorException('좋아요 삭제 실패');
     }
-    const updateBook = this.bookRepository.create({
-      ...book,
-      liked: removedList,
-    });
-    const result = await this.bookRepository.save(updateBook);
-    return { bookid: result.id, msg: '좋아요 삭제 완료' };
+
+    return result;
   }
 }

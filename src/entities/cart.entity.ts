@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -19,22 +20,26 @@ export class CartModel {
   @Column()
   qty: number;
 
-  @ManyToOne(() => UserModel, (user) => user.carts, {
-    cascade: true,
-  })
-  user: UserModel;
+  @Column()
+  bookId: number;
 
-  @ManyToOne(() => BookModel, (book) => book.carts, {
-    cascade: true,
-  })
-  book: BookModel;
+  @Column()
+  userId: number;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn()
   updatedAt: Date;
 
   @Column({ default: 'active' })
   status: TCartStatus;
+
+  @ManyToOne(() => UserModel, (user) => user.carts)
+  @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
+  user: UserModel;
+
+  @ManyToOne(() => BookModel, (book) => book.carts)
+  @JoinColumn({ name: 'bookId', referencedColumnName: 'id' })
+  book: BookModel;
 }

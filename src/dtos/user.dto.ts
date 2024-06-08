@@ -26,17 +26,24 @@ export class CreateUserDto extends PickType(UserModel, [
   password: string;
 }
 
-export class FoundUserResDto extends PickType(UserModel, [
-  'id',
-  'email',
-  'nickname',
-]) {
-  @Expose()
-  id: number;
+export class UserResDto {
+  readonly id: number;
+  readonly email: string;
+  readonly nickname: string;
+  constructor(data: UserModel) {
+    this.id = data.id;
+    this.email = data.email;
+    this.nickname = data.nickname;
+  }
+}
 
-  @Expose()
-  email: string;
+export class UserDetailResDto extends UserResDto {
+  readonly cartsId: number[];
+  readonly likedBooksId: number[];
 
-  @Expose()
-  nickname: string;
+  constructor(data: UserModel) {
+    super(data);
+    this.cartsId = data.carts.map((cart) => cart.id);
+    this.likedBooksId = data.liked.map((book) => book.bookId);
+  }
 }

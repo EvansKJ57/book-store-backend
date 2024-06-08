@@ -4,12 +4,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Between, FindOptionsWhere, Repository } from 'typeorm';
 import { mockBooksData } from '../entities/mock-data/mockBook';
 import { BookModel } from 'src/entities/book.entity';
 import { CategoryModel } from 'src/entities/category.entity';
-import { plainToInstance } from 'class-transformer';
-import { BookResDto, BookSummaryResDto } from 'src/dtos/book.dto';
+import { BookPaginationOptDto } from 'src/dtos/pagination-req.dto';
+import { dateCalculate } from 'src/util/date-calculate';
 
 @Injectable()
 export class BooksService {
@@ -35,31 +35,44 @@ export class BooksService {
 
       const data = { ...rest, category };
       const bookData = this.bookRepository.create(data);
-      return await this.bookRepository.save(bookData);
+      await this.bookRepository.save(bookData);
     }
   }
 
-  async getBooks() {
-    const books = await this.bookRepository.find();
+  async getBooks(dto: BookPaginationOptDto) {
+    const whereQuery: FindOptionsWhere<BookModel> = {};
+    if (dto.newBooks) {
+      whereQuery['pubDate'] = Between(dateCalculate(3), dateCalculate());
+    }
+    const books = await this.bookRepository.find({
+      relations: {
+        likes: true,
+        category: true,
+      },
+      where: { ...whereQuery },
+      ...dto,
+      order: {
+        id: 'ASC',
+      },
+    });
     if (books.length === 0) {
       throw new NotFoundException('도서 없음');
     }
-
-    const booksDto = books.map((book) =>
-      plainToInstance(BookSummaryResDto, book),
-    );
-
-    return booksDto;
+    return books;
   }
 
   async getBookDetail(bookId: number) {
     const foundBook = await this.bookRepository.findOne({
       where: { id: bookId },
+      relations: {
+        likes: true,
+        category: true,
+      },
     });
     if (!foundBook) {
       throw new NotFoundException('해당 도서 없음');
     }
-    const bookDto = plainToInstance(BookResDto, foundBook);
-    return bookDto;
+
+    return foundBook;
   }
 }

@@ -18,7 +18,13 @@ export class CategoriesService {
     return;
   }
 
-  getAll() {
+  getCategories() {
     return this.categoryRepository.find();
+  }
+
+  getCategory(id: number) {
+    return this.categoryRepository.findOne({
+      where: { id },
+    });
   }
 }

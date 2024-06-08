@@ -6,13 +6,15 @@ import { BookModel } from 'src/entities/book.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
 import { UsersModule } from './users.module';
+import { LikeModel } from 'src/entities/like.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserModel, BookModel]),
+    TypeOrmModule.forFeature([UserModel, BookModel, LikeModel]),
     AuthModule,
     UsersModule,
   ],
+  exports: [LikesService],
   controllers: [LikesController],
   providers: [LikesService],
 })

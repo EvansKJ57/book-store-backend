@@ -1,15 +1,13 @@
 import {
   Column,
   Entity,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { UserModel } from './user.entity';
 import { CategoryModel } from './category.entity';
 import { CartModel } from './cart.entity';
+import { LikeModel } from './like.entity';
 
 @Entity()
 export class BookModel {
@@ -40,22 +38,21 @@ export class BookModel {
   @Column()
   pages: number;
 
-  @Column('simple-array', { default: null, name: 'index_list' })
+  @Column('simple-array', { default: [] })
   indexList: string[];
 
   @Column()
   price: number;
 
-  @Column('date', { name: 'pub_date' })
+  @Column('date')
   pubDate: Date;
 
-  @ManyToOne(() => CategoryModel, (category) => category.id, { eager: true })
+  @ManyToOne(() => CategoryModel, (category) => category.id)
   category: CategoryModel;
 
   @OneToMany(() => CartModel, (cart) => cart.book)
   carts: CartModel[];
 
-  @ManyToMany(() => UserModel, (user) => user.likes, { eager: true })
-  @JoinTable()
-  liked: UserModel[];
+  @OneToMany(() => LikeModel, (like) => like.book)
+  likes: LikeModel[];
 }

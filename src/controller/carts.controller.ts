@@ -12,26 +12,30 @@ import { CartsService } from '../service/carts.service';
 import { AccessTokenGuard } from 'src/auth/guard/bearToken.guard';
 import { User } from 'src/decorator/user.decorator';
 import { UserModel } from 'src/entities/user.entity';
-import { CreateCartDto } from 'src/dtos/cart.dto';
+import { CartsResDto, CreateCartDto } from 'src/dtos/cart.dto';
 
 @Controller('carts')
 export class CartsController {
   constructor(private readonly cartsService: CartsService) {}
+
   @Post()
   @UseGuards(AccessTokenGuard)
-  create(@Body() body: CreateCartDto, @User() user: UserModel) {
-    return this.cartsService.create(body, user);
+  async create(@Body() body: CreateCartDto, @User() user: UserModel) {
+    const newCart = await this.cartsService.create(body, user);
+    return new CartsResDto(newCart);
   }
 
   @Get()
   @UseGuards(AccessTokenGuard)
-  getCarts(@User('id') userId: number) {
-    return this.cartsService.findAll(userId);
+  async getCarts(@User('id') userId: number) {
+    const carts = await this.cartsService.findAll(userId);
+    return carts.map((cart) => new CartsResDto(cart));
   }
 
   @Delete(':id')
   @UseGuards(AccessTokenGuard)
-  removeCart(@Param('id', ParseIntPipe) cartId: number) {
-    return this.cartsService.remove(cartId);
+  async removeCart(@Param('id', ParseIntPipe) cartId: number) {
+    const removed = await this.cartsService.remove(cartId);
+    return new CartsResDto(removed);
   }
 }
