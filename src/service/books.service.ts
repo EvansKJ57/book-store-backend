@@ -40,8 +40,9 @@ export class BooksService {
   }
 
   async getBooks(dto: BookPaginationOptDto) {
+    const { newBooks, ...rest } = dto;
     const whereQuery: FindOptionsWhere<BookModel> = {};
-    if (dto.newBooks) {
+    if (newBooks) {
       whereQuery['pubDate'] = Between(dateCalculate(3), dateCalculate());
     }
     const books = await this.bookRepository.find({
@@ -50,7 +51,7 @@ export class BooksService {
         category: true,
       },
       where: { ...whereQuery },
-      ...dto,
+      ...rest,
       order: {
         id: 'ASC',
       },

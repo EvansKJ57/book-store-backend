@@ -71,7 +71,7 @@ export class AuthService {
     try {
       const { type } = this.jwtService.decode(token);
 
-      let secretKey;
+      let secretKey: string;
       if (type === 'rf') {
         secretKey = this.configService.get<string>('jwt.refresh');
       } else {
@@ -83,7 +83,6 @@ export class AuthService {
       });
       return verifiedPayload;
     } catch (error) {
-      console.log(error);
       throw new UnauthorizedException('토큰이 만료됐거나 잘못된 토큰');
     }
   }

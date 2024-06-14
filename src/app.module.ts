@@ -13,6 +13,10 @@ import configuration from './config/configuration';
 import { CartModel } from './entities/cart.entity';
 import { CartsModule } from './moduels/carts.module';
 import { LikeModel } from './entities/like.entity';
+import { OrdersModule } from './moduels/orders.module';
+import { OrderModel } from './entities/order.entity';
+import { OrderDetailModel } from './entities/orderDetail.entity';
+import { DeliveryModel } from './entities/Delivery.entity';
 
 @Module({
   imports: [
@@ -29,7 +33,16 @@ import { LikeModel } from './entities/like.entity';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [BookModel, UserModel, CategoryModel, CartModel, LikeModel],
+      entities: [
+        BookModel,
+        UserModel,
+        CategoryModel,
+        CartModel,
+        LikeModel,
+        OrderModel,
+        OrderDetailModel,
+        DeliveryModel,
+      ],
       synchronize: true, // 자동연동 여부, 프로덕션 환경에서는 false로 한다.
     }),
     UsersModule,
@@ -38,6 +51,7 @@ import { LikeModel } from './entities/like.entity';
     AuthModule,
     LikesModule,
     CartsModule,
+    OrdersModule,
   ],
 })
 export class AppModule {}

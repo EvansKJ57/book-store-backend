@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { CartModel } from './cart.entity';
 import { LikeModel } from './like.entity';
 import { Expose } from 'class-transformer';
+import { OrderModel } from './order.entity';
 
 // export enum TProvider {
 //   local = 'LOCAL',
@@ -34,6 +35,9 @@ export class UserModel {
     onDelete: 'CASCADE',
   })
   liked: LikeModel[];
+
+  @OneToMany(() => OrderModel, (order) => order.user, { cascade: true })
+  orders: OrderModel[];
 
   // @Column('enum', { enum: TProvider, default: TProvider.local })
   // provider: TProvider;

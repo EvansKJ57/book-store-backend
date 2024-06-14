@@ -8,6 +8,7 @@ import {
 import { CategoryModel } from './category.entity';
 import { CartModel } from './cart.entity';
 import { LikeModel } from './like.entity';
+import { OrderDetailModel } from './orderDetail.entity';
 
 @Entity()
 export class BookModel {
@@ -55,4 +56,9 @@ export class BookModel {
 
   @OneToMany(() => LikeModel, (like) => like.book)
   likes: LikeModel[];
+
+  @OneToMany(() => OrderDetailModel, (orderDetail) => orderDetail.book, {
+    cascade: true,
+  })
+  orderDetails: OrderDetailModel[];
 }
