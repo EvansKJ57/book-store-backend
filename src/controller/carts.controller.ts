@@ -28,7 +28,7 @@ export class CartsController {
   @Get()
   @UseGuards(AccessTokenGuard)
   async getCarts(@User('id') userId: number) {
-    const carts = await this.cartsService.findAll(userId);
+    const carts = await this.cartsService.findActiveCarts(userId);
     return carts.map((cart) => new CartsResDto(cart));
   }
 

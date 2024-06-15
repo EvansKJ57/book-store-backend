@@ -1,8 +1,17 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { OrdersService } from '../service/orders.service';
 import { OrderResDto, postOrderDto } from 'src/dtos/order.dto';
 import { BearerTokenGuard } from 'src/auth/guard/bearToken.guard';
 import { User } from 'src/decorator/user.decorator';
+import { SetTransaction } from 'src/interceptor/transaction.interceptor';
+import { QueryRunner } from 'typeorm';
+import { Qr } from 'src/decorator/queryRunnder.decorator';
 
 @Controller('orders')
 export class OrdersController {
@@ -10,8 +19,20 @@ export class OrdersController {
 
   @Post()
   @UseGuards(BearerTokenGuard)
-  async createOrder(@Body() body: postOrderDto, @User('id') userId: number) {
-    const result = await this.ordersService.postOrder(body, userId);
-    return new OrderResDto(result);
+  @UseInterceptors(SetTransaction)
+  async createOrder(
+    @Body() body: postOrderDto,
+    @User('id') userId: number,
+    @Qr() qr: QueryRunner,
+  ) {
+    const result = await this.ordersService.createOrderTransaction(
+      body,
+      userId,
+      qr,
+    );
+    const foundNewOrder = await this.ordersService.findOrderOneById(
+      result.orderId,
+    );
+    return new OrderResDto(foundNewOrder);
   }
 }

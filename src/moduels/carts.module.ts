@@ -15,6 +15,7 @@ import { BookModel } from 'src/entities/book.entity';
     UsersModule,
     BooksModule,
   ],
+  exports: [CartsService],
   controllers: [CartsController],
   providers: [CartsService],
 })

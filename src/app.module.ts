@@ -17,6 +17,8 @@ import { OrdersModule } from './moduels/orders.module';
 import { OrderModel } from './entities/order.entity';
 import { OrderDetailModel } from './entities/orderDetail.entity';
 import { DeliveryModel } from './entities/Delivery.entity';
+import { OrderDetailsModule } from './moduels/order-details.module';
+import { DeliveryModule } from './moduels/delivery.module';
 
 @Module({
   imports: [
@@ -52,6 +54,8 @@ import { DeliveryModel } from './entities/Delivery.entity';
     LikesModule,
     CartsModule,
     OrdersModule,
+    OrderDetailsModule,
+    DeliveryModule,
   ],
 })
 export class AppModule {}

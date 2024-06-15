@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CartModel } from 'src/entities/cart.entity';
-import { Repository } from 'typeorm';
+import { CartModel, TCartStatus } from 'src/entities/cart.entity';
+import { DeepPartial, In, QueryRunner, Repository } from 'typeorm';
 import { BookModel } from 'src/entities/book.entity';
 import { UserModel } from 'src/entities/user.entity';
 import { CreateCartDto } from 'src/dtos/cart.dto';
@@ -14,6 +14,13 @@ export class CartsService {
     @InjectRepository(BookModel)
     private readonly bookRepository: Repository<BookModel>,
   ) {}
+
+  getRepository(qr?: QueryRunner) {
+    if (!qr) {
+      return this.cartRepository;
+    }
+    return qr.manager.getRepository(CartModel);
+  }
 
   async create(dto: CreateCartDto, user: UserModel) {
     const book = await this.bookRepository.findOne({
@@ -28,7 +35,7 @@ export class CartsService {
     return result;
   }
 
-  async findAll(userId: number) {
+  async findActiveCarts(userId: number) {
     const carts = await this.cartRepository.find({
       where: { userId, status: 'active' },
     });
@@ -36,7 +43,35 @@ export class CartsService {
     return carts;
   }
 
-  update() {}
+  async findActiveCartsById(userId: number, carts: number[]) {
+    const foundCarts = await this.cartRepository.find({
+      where: {
+        user: { id: userId },
+        id: In(carts),
+        status: 'active',
+      },
+    });
+
+    if (!foundCarts.length) {
+      throw new BadRequestException('해당 물품은 카트에 없습니다.');
+    }
+    return foundCarts;
+  }
+
+  async updateCartsStatus(
+    carts: CartModel[],
+    status: TCartStatus,
+    qr?: QueryRunner,
+  ) {
+    const repository = this.getRepository(qr);
+
+    const updatedCarts: DeepPartial<CartModel>[] = carts.map((cart) => ({
+      ...cart,
+      status,
+    }));
+
+    return repository.save(updatedCarts);
+  }
 
   async remove(cartId: number) {
     const foundCart = await this.cartRepository.findOne({
