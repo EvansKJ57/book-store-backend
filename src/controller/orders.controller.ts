@@ -11,7 +11,7 @@ import { BearerTokenGuard } from 'src/auth/guard/bearToken.guard';
 import { User } from 'src/decorator/user.decorator';
 import { SetTransaction } from 'src/interceptor/transaction.interceptor';
 import { QueryRunner } from 'typeorm';
-import { Qr } from 'src/decorator/queryRunnder.decorator';
+import { Qr } from 'src/decorator/queryRunner.decorator';
 
 @Controller('orders')
 export class OrdersController {

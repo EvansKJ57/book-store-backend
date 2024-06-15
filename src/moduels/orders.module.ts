@@ -3,7 +3,6 @@ import { OrdersService } from '../service/orders.service';
 import { OrdersController } from '../controller/orders.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrderModel } from 'src/entities/order.entity';
-import { DeliveryModel } from 'src/entities/Delivery.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { UsersModule } from './users.module';
 import { OrderDetailsModule } from './order-details.module';
@@ -12,7 +11,7 @@ import { DeliveryModule } from './delivery.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([OrderModel, DeliveryModel]),
+    TypeOrmModule.forFeature([OrderModel]),
     AuthModule,
     UsersModule,
     OrderDetailsModule,

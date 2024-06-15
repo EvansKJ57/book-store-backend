@@ -16,10 +16,7 @@ export class CartsService {
   ) {}
 
   getRepository(qr?: QueryRunner) {
-    if (!qr) {
-      return this.cartRepository;
-    }
-    return qr.manager.getRepository(CartModel);
+    return qr ? qr.manager.getRepository(CartModel) : this.cartRepository;
   }
 
   async create(dto: CreateCartDto, user: UserModel) {
