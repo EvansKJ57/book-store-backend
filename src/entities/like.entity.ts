@@ -3,7 +3,7 @@ import { UserModel } from './user.entity';
 import { BookModel } from './book.entity';
 import { Expose } from 'class-transformer';
 
-@Entity()
+@Entity('likes')
 export class LikeModel {
   @Expose()
   @PrimaryColumn()

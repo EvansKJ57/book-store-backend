@@ -9,7 +9,7 @@ import { OrderModel } from './order.entity';
 //   google = 'GOOGLE',
 // }
 
-@Entity()
+@Entity('users')
 export class UserModel {
   @PrimaryGeneratedColumn()
   id: number;

@@ -12,7 +12,7 @@ import { BookModel } from './book.entity';
 
 export type TCartStatus = 'active' | 'purchased' | 'removed';
 
-@Entity()
+@Entity('carts')
 export class CartModel {
   @PrimaryGeneratedColumn()
   id: number;

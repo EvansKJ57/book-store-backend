@@ -11,7 +11,6 @@ import {
 import { CartsService } from '../service/carts.service';
 import { AccessTokenGuard } from 'src/auth/guard/bearToken.guard';
 import { User } from 'src/decorator/user.decorator';
-import { UserModel } from 'src/entities/user.entity';
 import { CartsResDto, CreateCartDto } from 'src/dtos/cart.dto';
 
 @Controller('carts')
@@ -20,8 +19,8 @@ export class CartsController {
 
   @Post()
   @UseGuards(AccessTokenGuard)
-  async create(@Body() body: CreateCartDto, @User() user: UserModel) {
-    const newCart = await this.cartsService.create(body, user);
+  async create(@Body() body: CreateCartDto, @User('id') userId: number) {
+    const newCart = await this.cartsService.createCart(body, userId);
     return new CartsResDto(newCart);
   }
 

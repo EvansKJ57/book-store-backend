@@ -17,18 +17,13 @@ export class UsersService {
         liked: true,
         carts: true,
       },
-      where: {
-        carts: {
-          status: 'active',
-        },
-      },
     });
 
     return users;
   }
   // ----------------
 
-  async createUser(data: CreateUserDto) {
+  async createUser(data: CreateUserDto): Promise<UserModel> {
     const emailExist = await this.userRepository.exists({
       where: { email: data.email },
     });
@@ -49,7 +44,7 @@ export class UsersService {
     return newUser;
   }
 
-  async getUserByEmail(email: string) {
+  async getUserByEmail(email: string): Promise<UserModel> {
     const foundUser = await this.userRepository.findOneBy({ email });
     return foundUser;
   }

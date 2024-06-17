@@ -9,7 +9,7 @@ import { AuthService } from '../auth.service';
 import { UsersService } from 'src/service/users.service';
 
 @Injectable()
-export class BearerTokenGuard implements CanActivate {
+class BearerTokenGuard implements CanActivate {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UsersService,

@@ -19,20 +19,22 @@ export class CartsService {
     return qr ? qr.manager.getRepository(CartModel) : this.cartRepository;
   }
 
-  async create(dto: CreateCartDto, user: UserModel) {
+  async createCart(dto: CreateCartDto, userId: number): Promise<CartModel> {
     const book = await this.bookRepository.findOne({
       where: { id: dto.bookId },
     });
     const cartObj = this.cartRepository.create({
       book,
-      user,
+      user: {
+        id: userId,
+      },
       qty: dto.qty,
     });
     const result = await this.cartRepository.save(cartObj);
     return result;
   }
 
-  async findActiveCarts(userId: number) {
+  async findActiveCarts(userId: number): Promise<CartModel[]> {
     const carts = await this.cartRepository.find({
       where: { userId, status: 'active' },
     });
@@ -40,10 +42,13 @@ export class CartsService {
     return carts;
   }
 
-  async findActiveCartsById(userId: number, carts: number[]) {
+  async findActiveByCartId(
+    userId: number,
+    carts: number[],
+  ): Promise<CartModel[]> {
     const foundCarts = await this.cartRepository.find({
       where: {
-        user: { id: userId },
+        userId,
         id: In(carts),
         status: 'active',
       },

@@ -10,7 +10,7 @@ import { CartModel } from './cart.entity';
 import { LikeModel } from './like.entity';
 import { OrderDetailModel } from './orderDetail.entity';
 
-@Entity()
+@Entity('books')
 export class BookModel {
   @PrimaryGeneratedColumn()
   id: number;

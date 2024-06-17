@@ -44,7 +44,7 @@ export class OrdersService {
     userId: number,
     qr: QueryRunner,
   ) {
-    const foundCarts = await this.cartService.findActiveCartsById(
+    const foundCarts = await this.cartService.findActiveByCartId(
       userId,
       body.carts,
     );
@@ -70,5 +70,18 @@ export class OrdersService {
     );
 
     return { orderId: savedOrder.id };
+  }
+  getOrders(userId: number) {
+    return this.orderRepository.find({
+      where: {
+        user: {
+          id: userId,
+        },
+      },
+      relations: {
+        delivery: true,
+        orderDetails: true,
+      },
+    });
   }
 }

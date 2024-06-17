@@ -1,13 +1,14 @@
 import {
   Body,
   Controller,
+  Get,
   Post,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { OrdersService } from '../service/orders.service';
 import { OrderResDto, postOrderDto } from 'src/dtos/order.dto';
-import { BearerTokenGuard } from 'src/auth/guard/bearToken.guard';
+import { AccessTokenGuard } from 'src/auth/guard/bearToken.guard';
 import { User } from 'src/decorator/user.decorator';
 import { SetTransaction } from 'src/interceptor/transaction.interceptor';
 import { QueryRunner } from 'typeorm';
@@ -17,8 +18,15 @@ import { Qr } from 'src/decorator/queryRunner.decorator';
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
+  @Get()
+  @UseGuards(AccessTokenGuard)
+  async getOrders(@User('id') userId: number) {
+    const orders = await this.ordersService.getOrders(userId);
+    return orders.map((order) => new OrderResDto(order));
+  }
+
   @Post()
-  @UseGuards(BearerTokenGuard)
+  @UseGuards(AccessTokenGuard)
   @UseInterceptors(SetTransaction)
   async createOrder(
     @Body() body: postOrderDto,

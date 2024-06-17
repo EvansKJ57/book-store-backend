@@ -22,7 +22,7 @@ export class LikesService {
       },
     });
     if (isAlreadyLiked.length) {
-      throw new BadRequestException('이미 좋아요 되어있음');
+      throw new BadRequestException('좋아요 되어있음');
     }
 
     const result = await this.likeRepository.save({ bookId, userId });
