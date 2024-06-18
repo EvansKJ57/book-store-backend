@@ -30,6 +30,7 @@ export class UsersService {
     if (emailExist) {
       throw new BadRequestException('this email already signed up');
     }
+
     const nicknameExist = await this.userRepository.exists({
       where: { nickname: data.nickname },
     });

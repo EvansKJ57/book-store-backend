@@ -9,4 +9,9 @@ export default () => ({
     access: process.env.JWT_AC_KEY,
     access_time: process.env.JWT_AC_TIME,
   },
+  google: {
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientPw: process.env.GOOGLE_CLIENT_SECRET,
+    redirect: process.env.GOOGLE_REDIRECT_URI,
+  },
 });

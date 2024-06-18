@@ -1,7 +1,13 @@
 import { PickType } from '@nestjs/mapped-types';
 import { Expose } from 'class-transformer';
-import { IsNotEmpty, IsString, Length } from 'class-validator';
-import { UserModel } from 'src/entities/user.entity';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Length,
+} from 'class-validator';
+import { TProvider, UserModel } from 'src/entities/user.entity';
 
 export class CreateUserDto extends PickType(UserModel, [
   'email',
@@ -24,6 +30,15 @@ export class CreateUserDto extends PickType(UserModel, [
   @IsString()
   @Length(4, 10)
   password: string;
+
+  @Expose()
+  @IsOptional()
+  provider?: TProvider = 'LOCAL';
+
+  @Expose()
+  @IsOptional()
+  @IsString()
+  provider_sub?: string | null;
 }
 
 export class UserResDto {

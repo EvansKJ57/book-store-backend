@@ -4,10 +4,7 @@ import { LikeModel } from './like.entity';
 import { Expose } from 'class-transformer';
 import { OrderModel } from './order.entity';
 
-// export enum TProvider {
-//   local = 'LOCAL',
-//   google = 'GOOGLE',
-// }
+export type TProvider = 'LOCAL' | 'GOOGLE';
 
 @Entity('users')
 export class UserModel {
@@ -39,9 +36,9 @@ export class UserModel {
   @OneToMany(() => OrderModel, (order) => order.user, { cascade: true })
   orders: OrderModel[];
 
-  // @Column('enum', { enum: TProvider, default: TProvider.local })
-  // provider: TProvider;
+  @Column({ default: 'LOCAL' })
+  provider: TProvider;
 
-  // @Column({ default: null })
-  // provider_sub: string | null;
+  @Column({ default: null })
+  provider_sub: string | null;
 }

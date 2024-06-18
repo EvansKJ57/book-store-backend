@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Headers,
   Post,
   UnauthorizedException,
@@ -11,6 +12,7 @@ import { RefreshTokenGuard } from './guard/bearToken.guard';
 import { UserModel } from 'src/entities/user.entity';
 import { User } from 'src/decorator/user.decorator';
 import { CreateUserDto, UserResDto } from 'src/dtos/user.dto';
+import { GoogleOauthGuard } from './guard/google-oauth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -22,7 +24,17 @@ export class AuthController {
     return new UserResDto(newUser);
   }
 
-  @Post('login/email')
+  @Get('login/google')
+  @UseGuards(GoogleOauthGuard)
+  loginHandle() {}
+
+  @Get('login/google/redirect')
+  @UseGuards(GoogleOauthGuard)
+  redirectHandle(@User() user: UserModel) {
+    return this.authService.loginUser(user);
+  }
+
+  @Post('login/local')
   loginWithEmail(@Body() body: Pick<CreateUserDto, 'email' | 'password'>) {
     return this.authService.loginWithEmail(body);
   }
