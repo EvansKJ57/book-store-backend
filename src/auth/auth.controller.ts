@@ -1,22 +1,19 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Headers,
-  Post,
-  UnauthorizedException,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { RefreshTokenGuard } from './guard/bearToken.guard';
 import { UserModel } from 'src/entities/user.entity';
 import { User } from 'src/decorator/user.decorator';
 import { CreateUserDto, UserResDto } from 'src/dtos/user.dto';
 import { GoogleOauthGuard } from './guard/google-oauth.guard';
+import { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
+import { RefreshTokenGuard } from './guard/refresh-token.guard';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @Post('register/email')
   async registerUser(@Body() body: CreateUserDto) {
@@ -30,27 +27,32 @@ export class AuthController {
 
   @Get('login/google/redirect')
   @UseGuards(GoogleOauthGuard)
-  redirectHandle(@User() user: UserModel) {
-    return this.authService.loginUser(user);
+  redirectHandle(@Res() res: Response, @User() user: UserModel) {
+    const { rfToken } = this.authService.loginUser(user);
+    res.cookie('refreshToken', rfToken, {
+      httpOnly: true,
+      maxAge: this.configService.get<number>('jwt.refresh_time'),
+    });
+    const frontUrl = this.configService.get<string>('frontUrl');
+    res.redirect(`${frontUrl}/login/acb`);
   }
 
   @Post('login/local')
-  loginWithEmail(@Body() body: Pick<CreateUserDto, 'email' | 'password'>) {
-    return this.authService.loginWithEmail(body);
+  async loginWithEmail(
+    @Res() res: Response,
+    @Body() body: Pick<CreateUserDto, 'email' | 'password'>,
+  ) {
+    const { acToken, rfToken } = await this.authService.loginWithEmail(body);
+    res.cookie('refreshToken', rfToken, {
+      httpOnly: true,
+      maxAge: this.configService.get<number>('jwt.refresh_time'),
+    });
+    res.json({ acToken });
   }
 
   @Post('token/reissue')
   @UseGuards(RefreshTokenGuard)
-  async generateNewAccessToken(
-    @User() user: UserModel,
-    @Headers('authorization') authHeader: string,
-  ) {
-    const rfToken = this.authService.extractTokenFromHeader(authHeader);
-
-    const isVerified = await this.authService.verifyToken(rfToken);
-    if (!isVerified) {
-      throw new UnauthorizedException('토큰만료, 다시 로그인하세요');
-    }
+  async generateNewAccessToken(@User() user: UserModel) {
     const newToken = this.authService.signToken(user, false);
     return { acToken: newToken };
   }

@@ -8,11 +8,11 @@ import {
 } from '@nestjs/common';
 import { OrdersService } from '../service/orders.service';
 import { OrderResDto, postOrderDto } from 'src/dtos/order.dto';
-import { AccessTokenGuard } from 'src/auth/guard/bearToken.guard';
 import { User } from 'src/decorator/user.decorator';
 import { SetTransaction } from 'src/interceptor/transaction.interceptor';
 import { QueryRunner } from 'typeorm';
 import { Qr } from 'src/decorator/queryRunner.decorator';
+import { AccessTokenGuard } from 'src/auth/guard/access-token.guard';
 
 @Controller('orders')
 export class OrdersController {

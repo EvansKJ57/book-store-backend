@@ -6,7 +6,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { AccessTokenGuard } from 'src/auth/guard/bearToken.guard';
+import { AccessTokenGuard } from 'src/auth/guard/access-token.guard';
 import { User } from 'src/decorator/user.decorator';
 import { LikesService } from 'src/service/likes.service';
 

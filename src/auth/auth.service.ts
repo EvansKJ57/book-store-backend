@@ -58,7 +58,7 @@ export class AuthService {
       this.configService.get<string>('jwt.access'),
     ];
     const [rf_time, ac_time] = [
-      this.configService.get<string>('jwt.refresh_time'),
+      this.configService.get<number>('jwt.refresh_time'),
       this.configService.get<string>('jwt.access_time'),
     ];
     return this.jwtService.sign(payload, {

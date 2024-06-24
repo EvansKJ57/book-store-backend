@@ -9,9 +9,9 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { CartsService } from '../service/carts.service';
-import { AccessTokenGuard } from 'src/auth/guard/bearToken.guard';
 import { User } from 'src/decorator/user.decorator';
 import { CartsResDto, CreateCartDto } from 'src/dtos/cart.dto';
+import { AccessTokenGuard } from 'src/auth/guard/access-token.guard';
 
 @Controller('carts')
 export class CartsController {

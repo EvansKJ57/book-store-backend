@@ -9,7 +9,7 @@ import { AuthService } from '../auth.service';
 import { UsersService } from 'src/service/users.service';
 
 @Injectable()
-class BearerTokenGuard implements CanActivate {
+export class AccessTokenGuard implements CanActivate {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UsersService,
@@ -23,35 +23,15 @@ class BearerTokenGuard implements CanActivate {
     const token = this.authService.extractTokenFromHeader(authHeader);
     const payload = await this.authService.verifyToken(token);
 
+    if (payload.type !== 'ac') {
+      throw new UnauthorizedException('엑세스 토큰이 아님');
+    }
+
     const user = await this.userService.getUserByEmail(payload.email);
 
     req.user = user;
     req.token = token;
     req.tokenType = payload.type;
-    return true;
-  }
-}
-
-@Injectable()
-export class AccessTokenGuard extends BearerTokenGuard {
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    await super.canActivate(context);
-    const req = context.switchToHttp().getRequest();
-    if (req.tokenType !== 'ac' && req.user && req.token) {
-      throw new UnauthorizedException('엑세스 토큰이 아님');
-    }
-    return true;
-  }
-}
-
-@Injectable()
-export class RefreshTokenGuard extends BearerTokenGuard {
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    await super.canActivate(context);
-    const req = context.switchToHttp().getRequest();
-    if (req.tokenType !== 'rf' && req.user && req.token) {
-      throw new UnauthorizedException('리프레쉬 토큰이 아님');
-    }
     return true;
   }
 }
