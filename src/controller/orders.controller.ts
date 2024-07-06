@@ -13,7 +13,9 @@ import { SetTransaction } from 'src/interceptor/transaction.interceptor';
 import { QueryRunner } from 'typeorm';
 import { Qr } from 'src/decorator/queryRunner.decorator';
 import { AccessTokenGuard } from 'src/auth/guard/access-token.guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('orders')
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}

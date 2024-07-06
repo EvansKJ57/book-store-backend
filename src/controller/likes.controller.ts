@@ -6,10 +6,12 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/auth/guard/access-token.guard';
 import { User } from 'src/decorator/user.decorator';
 import { LikesService } from 'src/service/likes.service';
 
+@ApiTags('likes')
 @Controller('likes')
 export class LikesController {
   constructor(private readonly likesService: LikesService) {}
