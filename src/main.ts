@@ -9,7 +9,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
   const frontUrl = configService.get<string>('frontUrl');
-  const port = configService.get<number>('port');
+  const port = configService.get<number>('port', { infer: true });
+
   const config = new DocumentBuilder()
     .setTitle('Books store api')
     .setDescription('books-store-api')
@@ -41,6 +42,8 @@ async function bootstrap() {
       forbidNonWhitelisted: true, // DTO에 정의되지 않은 속성이 있으면 에러 발생
     }),
   );
-  await app.listen(port);
+  await app.listen(port, () => {
+    console.log(`server is running on ${port}`);
+  });
 }
 bootstrap();

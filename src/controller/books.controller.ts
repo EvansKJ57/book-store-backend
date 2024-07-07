@@ -9,13 +9,7 @@ import {
 import { BooksService } from '../service/books.service';
 import { BookDetailDto, BookDto } from 'src/dtos/book.dto';
 import { BookPaginationOptDto } from 'src/dtos/pagination-req.dto';
-import {
-  ApiOperation,
-  ApiParam,
-  ApiQuery,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('books')
 @Controller('books')
