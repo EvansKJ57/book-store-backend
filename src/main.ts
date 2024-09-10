@@ -8,8 +8,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
-  const frontUrl = configService.get<string>('frontUrl');
-  const port = configService.get<number>('port', { infer: true });
+  const frontUrl = configService.get<string>('FRONT_BASE_URL');
+  const port = configService.get<number>('PORT');
 
   const config = new DocumentBuilder()
     .setTitle('Books store api')

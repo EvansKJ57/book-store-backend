@@ -5,22 +5,22 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CategoriesModule } from './moduels/categories.module';
 import { AuthModule } from './auth/auth.module';
 import { LikesModule } from './moduels/likes.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CartsModule } from './moduels/carts.module';
 import { OrdersModule } from './moduels/orders.module';
 import { OrderDetailsModule } from './moduels/order-details.module';
 import { DeliveryModule } from './moduels/delivery.module';
-import { typeormConfig } from './config/typrorm.postgres.confiig';
-import localConfig from './config/environment/local.config';
+import { typeormConfig } from './config/typeorrm.postgres.confiig';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [localConfig],
-      envFilePath: '.env.development.local',
       isGlobal: true,
     }),
-    TypeOrmModule.forRootAsync(typeormConfig),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: typeormConfig,
+    }),
     UsersModule,
     BooksModule,
     CategoriesModule,

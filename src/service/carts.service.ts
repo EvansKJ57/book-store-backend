@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CartModel, TCartStatus } from 'src/entities/cart.entity';
 import { DeepPartial, In, QueryRunner, Repository } from 'typeorm';
 import { BookModel } from 'src/entities/book.entity';
-import { UserModel } from 'src/entities/user.entity';
 import { CreateCartDto } from 'src/dtos/cart.dto';
 
 @Injectable()

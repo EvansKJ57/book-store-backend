@@ -1,12 +1,8 @@
 services:
-  postgres:
-    image: postgres:15
-    restart: always
-    volumes:
-      - ./postgres-data:/var/lib/postgresql/data
+  api-server:
+    container_name: api-server
+    image: evanskj/book-shop:latest
     ports:
-      - '5433:5432'
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: book-store
+      - 80: ${PORT}
+    env_file:
+      - /opt/elasticbeanstalk/deployment/env.list

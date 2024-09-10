@@ -15,7 +15,7 @@ export class AuthService {
   ) {}
 
   async registerWithEmail(user: CreateUserDto) {
-    const hashRound = this.configService.get<number>('bcrypt.round');
+    const hashRound = this.configService.get<number>('HASH_ROUND');
 
     const hash = await bcrypt.hash(user.password, hashRound);
     const newUser = await this.userService.createUser({
@@ -54,12 +54,12 @@ export class AuthService {
       type: isRfToken ? 'rf' : 'ac',
     };
     const [rfKey, acKey] = [
-      this.configService.get<string>('jwt.refresh'),
-      this.configService.get<string>('jwt.access'),
+      this.configService.get<string>('JWT_RF_KEY'),
+      this.configService.get<string>('JWT_AC_KEY'),
     ];
     const [rf_time, ac_time] = [
-      this.configService.get<number>('jwt.refresh_time'),
-      this.configService.get<string>('jwt.access_time'),
+      this.configService.get<number>('JWT_RF_TIME'),
+      this.configService.get<string>('JWT_AC_TIME'),
     ];
     return this.jwtService.sign(payload, {
       secret: isRfToken ? rfKey : acKey,
@@ -73,9 +73,9 @@ export class AuthService {
 
       let secretKey: string;
       if (type === 'rf') {
-        secretKey = this.configService.get<string>('jwt.refresh');
+        secretKey = this.configService.get<string>('JWT_RF_KEY');
       } else {
-        secretKey = this.configService.get<string>('jwt.access');
+        secretKey = this.configService.get<string>('JWT_AC_KEY');
       }
 
       const verifiedPayload = await this.jwtService.verify(token, {

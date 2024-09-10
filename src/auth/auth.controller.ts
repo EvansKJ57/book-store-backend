@@ -31,9 +31,9 @@ export class AuthController {
     const { rfToken } = this.authService.loginUser(user);
     res.cookie('refreshToken', rfToken, {
       httpOnly: true,
-      maxAge: this.configService.get<number>('jwt.refresh_time'),
+      maxAge: this.configService.get<number>('JWT_RF_TIME'),
     });
-    const frontUrl = this.configService.get<string>('frontUrl');
+    const frontUrl = this.configService.get<string>('FRONT_BASE_URL');
     res.redirect(`${frontUrl}/login/acb`);
   }
 
@@ -45,7 +45,7 @@ export class AuthController {
     const { acToken, rfToken } = await this.authService.loginWithEmail(body);
     res.cookie('refreshToken', rfToken, {
       httpOnly: true,
-      maxAge: this.configService.get<number>('jwt.refresh_time'),
+      maxAge: this.configService.get<number>('JWT_RF_TIME'),
     });
     res.json({ acToken });
   }
