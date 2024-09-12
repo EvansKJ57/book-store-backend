@@ -8,6 +8,8 @@ RUN npm install
 
 COPY . .
 
+RUN npm run build
+
 FROM node:lts-alpine AS runner
 
 WORKDIR /usr/src/app
