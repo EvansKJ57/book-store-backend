@@ -4,7 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 import * as cookieParser from 'cookie-parser';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule } from '@nestjs/swagger';
-import * as expressBasicAuth from 'express-basic-auth';
+import * as basicAuth from 'express-basic-auth';
 import { swaggerConfig } from './config/swagger.config';
 
 async function bootstrap() {
@@ -24,7 +24,7 @@ async function bootstrap() {
   if (nodeEnv === 'prod') {
     app.use(
       ['/api'],
-      expressBasicAuth({
+      basicAuth({
         challenge: true,
         users: {
           admin: swaggerPw,
