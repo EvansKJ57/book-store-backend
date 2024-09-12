@@ -1,0 +1,13 @@
+files:
+  "/root/.docker/config.json":
+    mode: "000600"
+    owner: root
+    group: root
+    content: |
+      {
+        "auths": {
+          "https://index.docker.io/v1/": {
+            "auth": "${DOCKER_AUTH}"
+          }
+        }
+      }

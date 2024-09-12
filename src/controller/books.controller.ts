@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Get,
-  Param,
-  ParseIntPipe,
-  Post,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
 import { BooksService } from '../service/books.service';
 import { BookDetailDto, BookDto } from 'src/dtos/book.dto';
 import { BookPaginationOptDto } from 'src/dtos/pagination-req.dto';
@@ -15,18 +8,6 @@ import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 @Controller('books')
 export class BooksController {
   constructor(private readonly booksService: BooksService) {}
-
-  /**
-   * 테스트용
-   */
-  @ApiOperation({
-    summary: '테스트 데이터 넣기',
-    description: '테스트용 데이터',
-  })
-  @Post()
-  async generateTestData() {
-    return this.booksService.generateTestBooks();
-  }
 
   //(카테고리 별, 신간) 전체 도서 목록 조회
   @ApiOperation({

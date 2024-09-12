@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { CategoriesService } from '../service/categories.service';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -6,12 +6,6 @@ import { ApiTags } from '@nestjs/swagger';
 @Controller('category')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
-
-  /** 초기 목 데이터 저장 */
-  @Post()
-  insertMockData() {
-    return this.categoriesService.insertMock();
-  }
 
   @Get()
   getAll() {
