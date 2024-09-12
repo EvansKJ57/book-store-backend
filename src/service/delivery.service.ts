@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { createDeliveryInfoDto } from 'src/dtos/delivery.dto';
-import { DeliveryModel } from 'src/entities/Delivery.entity';
+import { DeliveryModel } from 'src/entities/delivery.entity';
 import { QueryRunner, Repository } from 'typeorm';
 
 @Injectable()
