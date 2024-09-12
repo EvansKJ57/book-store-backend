@@ -1,0 +1,12 @@
+node_modules
+postgres-data
+dist
+.env*
+test
+.gitignore
+.github
+.git
+.prettierrc
+Dockerfile*
+docker-compose*
+README.md
