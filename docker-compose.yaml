@@ -5,4 +5,4 @@ services:
     ports:
       - '80:${PORT}'
     env_file:
-      - /opt/elasticbeanstalk/deployment/env.list
+      - .env
