@@ -25,7 +25,9 @@ jobs:
           context: .
           file: Dockerfile
           push: true
-          tags: evanskj/book-shop:latest
+          tags: |
+            evanskj/book-shop:${{ github.run_number }}.${{ github.run_attempt }}
+            evanskj/book-shop:latest
 
       - name: Generate Dockerhub Ebextension auth config
         run: |
