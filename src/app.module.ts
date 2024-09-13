@@ -10,10 +10,10 @@ import { CartsModule } from './moduels/carts.module';
 import { OrdersModule } from './moduels/orders.module';
 import { OrderDetailsModule } from './moduels/order-details.module';
 import { DeliveryModule } from './moduels/delivery.module';
-import { typeormConfig } from './config/typeorrm.postgres.confiig';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TransactionInterceptor } from './interceptor/transaction.interceptor';
 import { LoggingInterceptor } from './interceptor/Logging.interceptor';
+import { typeormConfig } from './config/typeorm.config';
 
 @Module({
   imports: [
