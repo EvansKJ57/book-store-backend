@@ -17,10 +17,10 @@ export class postOrderDto {
 export class OrderDetailResDto {
   readonly bookId: number;
   readonly qty: number;
-  readonly cartId: number;
+  readonly orderDetailId: number;
 
   constructor(data: any) {
-    this.cartId = data.id;
+    this.orderDetailId = data.id;
     this.bookId = data.bookId;
     this.qty = data.qty;
   }

@@ -1,19 +1,12 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  UseGuards,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { OrdersService } from '../service/orders.service';
 import { OrderResDto, postOrderDto } from 'src/dtos/order.dto';
 import { User } from 'src/decorator/user.decorator';
-import { SetTransaction } from 'src/interceptor/transaction.interceptor';
 import { QueryRunner } from 'typeorm';
 import { Qr } from 'src/decorator/queryRunner.decorator';
 import { AccessTokenGuard } from 'src/auth/guard/access-token.guard';
 import { ApiTags } from '@nestjs/swagger';
+import { Transactional } from 'src/decorator/transactional.decorator';
 
 @ApiTags('orders')
 @Controller('orders')
@@ -27,9 +20,9 @@ export class OrdersController {
     return orders.map((order) => new OrderResDto(order));
   }
 
+  @Transactional()
   @Post()
   @UseGuards(AccessTokenGuard)
-  @UseInterceptors(SetTransaction)
   async createOrder(
     @Body() body: postOrderDto,
     @User('id') userId: number,
