@@ -13,6 +13,7 @@ import { DeliveryModule } from './moduels/delivery.module';
 import { typeormConfig } from './config/typeorrm.postgres.confiig';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TransactionInterceptor } from './interceptor/transaction.interceptor';
+import { LoggingInterceptor } from './interceptor/Logging.interceptor';
 
 @Module({
   imports: [
@@ -33,6 +34,9 @@ import { TransactionInterceptor } from './interceptor/transaction.interceptor';
     OrderDetailsModule,
     DeliveryModule,
   ],
-  providers: [{ provide: APP_INTERCEPTOR, useClass: TransactionInterceptor }],
+  providers: [
+    { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
+    { provide: APP_INTERCEPTOR, useClass: TransactionInterceptor },
+  ],
 })
 export class AppModule {}

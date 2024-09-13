@@ -36,6 +36,7 @@ export class TransactionInterceptor implements NestInterceptor {
       catchError(async (error) => {
         await qr.rollbackTransaction();
         await qr.release();
+        error.message = '트랜잭션 실패.' + error.message;
         throw error;
       }),
       tap(async () => {
