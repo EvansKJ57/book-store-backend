@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  CreateDateColumn,
+} from 'typeorm';
 import { CartModel } from './cart.entity';
 import { LikeModel } from './like.entity';
 import { Expose } from 'class-transformer';
@@ -41,4 +47,7 @@ export class UserModel {
 
   @Column({ default: null })
   provider_sub: string | null;
+
+  @CreateDateColumn()
+  created_at: Date;
 }
