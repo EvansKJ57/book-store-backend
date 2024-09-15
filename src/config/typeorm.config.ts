@@ -15,6 +15,5 @@ export const typeormConfig = (
     database: configService.get<string>('DB_NAME'),
     autoLoadEntities: true,
     synchronize: nodeEnv !== 'prod',
-    migrationsRun: nodeEnv === 'prod',
   };
 };
