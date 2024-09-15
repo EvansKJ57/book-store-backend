@@ -4,6 +4,7 @@ import {
   Column,
   OneToMany,
   CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { CartModel } from './cart.entity';
 import { LikeModel } from './like.entity';
@@ -49,5 +50,8 @@ export class UserModel {
   provider_sub: string | null;
 
   @CreateDateColumn()
-  created_at: Date;
+  created_Date: Date;
+
+  @UpdateDateColumn()
+  updated_Date: Date;
 }
