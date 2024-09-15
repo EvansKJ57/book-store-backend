@@ -50,8 +50,8 @@ export class UserModel {
   provider_sub: string | null;
 
   @CreateDateColumn()
-  created_Date: Date;
+  created_date: Date;
 
   @UpdateDateColumn()
-  updated_Date: Date;
+  updated_date: Date;
 }
