@@ -36,11 +36,11 @@ export class OrderResDto {
 
   constructor(data: OrderModel) {
     this.id = data.id;
-    this.createdAt = data.createdAt;
+    this.createdAt = data.created_date;
     this.address = data.delivery.address;
     this.contact = data.delivery.contact;
     this.receiver = data.delivery.receiver;
-    this.orderDetails = data.orderDetails.map(
+    this.orderDetails = data.order_details.map(
       (orderDetail) => new OrderDetailResDto(orderDetail),
     );
   }

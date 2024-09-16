@@ -21,10 +21,10 @@ export class OrderModel {
   delivery: DeliveryModel;
 
   @CreateDateColumn()
-  createdAt: Date;
+  created_date: Date;
 
   @OneToMany(() => OrderDetailModel, (orderDetail) => orderDetail.order, {
     cascade: true,
   })
-  orderDetails: OrderDetailModel[];
+  order_details: OrderDetailModel[];
 }

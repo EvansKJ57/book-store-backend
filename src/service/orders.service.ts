@@ -30,7 +30,7 @@ export class OrdersService {
       },
       relations: {
         delivery: true,
-        orderDetails: true,
+        order_details: true,
       },
     });
     if (!foundOrder) {
@@ -80,7 +80,7 @@ export class OrdersService {
       },
       relations: {
         delivery: true,
-        orderDetails: true,
+        order_details: true,
       },
     });
   }

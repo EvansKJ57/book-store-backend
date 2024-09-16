@@ -19,7 +19,7 @@ export class OrderDetailModel {
   @Column()
   bookId: number;
 
-  @ManyToOne(() => OrderModel, (order) => order.orderDetails)
+  @ManyToOne(() => OrderModel, (order) => order.order_details)
   order: OrderModel;
 
   @ManyToOne(() => BookModel, (book) => book.orderDetails)
