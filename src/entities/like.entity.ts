@@ -1,4 +1,5 @@
 import {
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -29,4 +30,7 @@ export class LikeModel {
 
   @UpdateDateColumn()
   updated_date: Date;
+
+  @CreateDateColumn()
+  created_date: Date;
 }
