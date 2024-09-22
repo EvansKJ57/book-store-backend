@@ -18,4 +18,4 @@ COPY --from=builder /usr/src/app/dist ./dist
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY package.json ./
 
-CMD ["sh", "-c", "npm run migration:run && node dist/main"]
+CMD ["npm", "run", "start:prod"]

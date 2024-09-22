@@ -1,4 +1,10 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import {
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { UserModel } from './user.entity';
 import { BookModel } from './book.entity';
 import { Expose } from 'class-transformer';
@@ -20,4 +26,7 @@ export class LikeModel {
   @ManyToOne(() => BookModel, (book) => book.likes)
   @JoinColumn({ name: 'bookId', referencedColumnName: 'id' })
   book: BookModel;
+
+  @UpdateDateColumn()
+  updated_date: Date;
 }
