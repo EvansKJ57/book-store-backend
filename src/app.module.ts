@@ -14,11 +14,13 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TransactionInterceptor } from './interceptor/transaction.interceptor';
 import { LoggingInterceptor } from './interceptor/Logging.interceptor';
 import { typeormConfig } from './config/typeorm.config';
+import { envJoiSchema } from './config/env-joi-schema';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      validationSchema: envJoiSchema,
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
