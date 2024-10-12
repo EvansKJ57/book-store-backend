@@ -3,7 +3,7 @@ name: build-deploy
 
 on:
   push:
-    branches: ['main']
+    branches: ['deploy']
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
