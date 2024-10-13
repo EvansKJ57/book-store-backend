@@ -11,10 +11,11 @@ import { OrdersModule } from './modules/orders.module';
 import { OrderDetailsModule } from './modules/order-details.module';
 import { DeliveryModule } from './modules/delivery.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { TransactionInterceptor } from './interceptor/transaction.interceptor';
 import { LoggingInterceptor } from './interceptor/Logging.interceptor';
 import { typeormConfig } from './config/typeorm.config';
 import { envJoiSchema } from './config/env-joi-schema';
+import { addTransactionalDataSource } from 'typeorm-transactional';
+import { DataSource } from 'typeorm';
 
 @Module({
   imports: [
@@ -25,6 +26,13 @@ import { envJoiSchema } from './config/env-joi-schema';
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: typeormConfig,
+      async dataSourceFactory(options) {
+        if (!options) {
+          throw new Error('Invalid options passed');
+        }
+
+        return addTransactionalDataSource(new DataSource(options));
+      },
     }),
     UsersModule,
     BooksModule,
@@ -36,9 +44,6 @@ import { envJoiSchema } from './config/env-joi-schema';
     OrderDetailsModule,
     DeliveryModule,
   ],
-  providers: [
-    { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
-    { provide: APP_INTERCEPTOR, useClass: TransactionInterceptor },
-  ],
+  providers: [{ provide: APP_INTERCEPTOR, useClass: LoggingInterceptor }],
 })
 export class AppModule {}
