@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { createDeliveryInfoDto } from 'src/dtos/delivery.dto';
 import { DeliveryModel } from 'src/entities/delivery.entity';
-import { QueryRunner, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class DeliveryService {
@@ -11,15 +11,8 @@ export class DeliveryService {
     private readonly deliveryRepository: Repository<DeliveryModel>,
   ) {}
 
-  getRepository(qr?: QueryRunner) {
-    return qr
-      ? qr.manager.getRepository<DeliveryModel>(DeliveryModel)
-      : this.deliveryRepository;
-  }
-
-  async createDelivery(data: createDeliveryInfoDto, qr?: QueryRunner) {
-    const repository = this.getRepository(qr);
-    const savedDelivery = await repository.save(data);
+  async createDelivery(data: createDeliveryInfoDto) {
+    const savedDelivery = await this.deliveryRepository.save(data);
     return savedDelivery;
   }
 }

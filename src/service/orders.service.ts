@@ -6,6 +6,7 @@ import { QueryRunner, Repository } from 'typeorm';
 import { OrderDetailsService } from './order-details.service';
 import { CartsService } from './carts.service';
 import { DeliveryService } from './delivery.service';
+import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class OrdersService {
@@ -17,13 +18,7 @@ export class OrdersService {
     private readonly deliveryService: DeliveryService,
   ) {}
 
-  getRepository(qr?: QueryRunner) {
-    return qr
-      ? qr.manager.getRepository<OrderModel>(OrderModel)
-      : this.orderRepository;
-  }
-
-  async findOrderOneById(orderId: number) {
+  async findOrderOneById(orderId: number): Promise<OrderModel> {
     const foundOrder = await this.orderRepository.findOne({
       where: {
         id: orderId,
@@ -39,39 +34,37 @@ export class OrdersService {
     return foundOrder;
   }
 
+  @Transactional()
   async createOrderTransaction(
     body: postOrderDto,
     userId: number,
-    qr: QueryRunner,
-  ) {
+  ): Promise<{ createdOrderId: number }> {
     const foundCarts = await this.cartService.findActiveByCartId(
       userId,
       body.carts,
     );
 
     const [savedDelivery, _] = await Promise.all([
-      this.deliveryService.createDelivery(body.delivery, qr),
+      this.deliveryService.createDelivery(body.delivery),
       this.cartService.updateCartsStatus(foundCarts, 'purchased'),
     ]);
 
-    const repository = this.getRepository(qr);
-
-    const createdOrder = repository.create({
+    const createdOrder = this.orderRepository.create({
       delivery: savedDelivery,
       user: { id: userId },
     });
 
-    const savedOrder = await repository.save(createdOrder);
+    const savedOrder = await this.orderRepository.insert(createdOrder);
 
     await this.orderDetailService.createOrderDetail(
       foundCarts,
-      createdOrder.id,
-      qr,
+      savedOrder.raw[0].id,
     );
 
-    return { orderId: savedOrder.id };
+    return { createdOrderId: savedOrder.raw[0].id };
   }
-  getOrders(userId: number) {
+
+  getOrders(userId: number): Promise<OrderModel[]> {
     return this.orderRepository.find({
       where: {
         user: {

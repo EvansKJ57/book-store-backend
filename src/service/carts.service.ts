@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CartModel, TCartStatus } from 'src/entities/cart.entity';
-import { DeepPartial, In, QueryRunner, Repository } from 'typeorm';
+import { DeepPartial, In, Repository } from 'typeorm';
 import { BookModel } from 'src/entities/book.entity';
 import { CreateCartDto } from 'src/dtos/cart.dto';
 
@@ -14,19 +14,13 @@ export class CartsService {
     private readonly bookRepository: Repository<BookModel>,
   ) {}
 
-  getRepository(qr?: QueryRunner) {
-    return qr ? qr.manager.getRepository(CartModel) : this.cartRepository;
-  }
-
   async createCart(dto: CreateCartDto, userId: number): Promise<CartModel> {
     const book = await this.bookRepository.findOne({
       where: { id: dto.bookId },
     });
     const cartObj = this.cartRepository.create({
       book,
-      user: {
-        id: userId,
-      },
+      user: { id: userId },
       qty: dto.qty,
     });
     const result = await this.cartRepository.save(cartObj);
@@ -59,19 +53,13 @@ export class CartsService {
     return foundCarts;
   }
 
-  async updateCartsStatus(
-    carts: CartModel[],
-    status: TCartStatus,
-    qr?: QueryRunner,
-  ) {
-    const repository = this.getRepository(qr);
-
+  async updateCartsStatus(carts: CartModel[], status: TCartStatus) {
     const updatedCarts: DeepPartial<CartModel>[] = carts.map((cart) => ({
       ...cart,
       status,
     }));
 
-    return repository.save(updatedCarts);
+    return this.cartRepository.save(updatedCarts);
   }
 
   async remove(cartId: number) {
