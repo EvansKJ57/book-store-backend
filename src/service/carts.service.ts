@@ -53,7 +53,10 @@ export class CartsService {
     return foundCarts;
   }
 
-  async updateCartsStatus(carts: CartModel[], status: TCartStatus) {
+  async updateCartsStatus(
+    carts: CartModel[],
+    status: TCartStatus,
+  ): Promise<CartModel[]> {
     const updatedCarts: DeepPartial<CartModel>[] = carts.map((cart) => ({
       ...cart,
       status,
@@ -62,11 +65,9 @@ export class CartsService {
     return this.cartRepository.save(updatedCarts);
   }
 
-  async remove(cartId: number) {
+  async remove(cartId: number): Promise<CartModel> {
     const foundCart = await this.cartRepository.findOne({
-      where: {
-        id: cartId,
-      },
+      where: { id: cartId },
     });
 
     if (!foundCart || foundCart.status === 'removed') {

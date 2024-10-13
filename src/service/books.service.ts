@@ -15,7 +15,7 @@ export class BooksService {
     private readonly categoryRepository: Repository<CategoryModel>,
   ) {}
 
-  async getBooks(dto: BookPaginationOptDto) {
+  async getBooks(dto: BookPaginationOptDto): Promise<BookModel[]> {
     const { newBooks, ...rest } = dto;
     const whereQuery: FindOptionsWhere<BookModel> = {};
     if (newBooks) {
@@ -38,7 +38,7 @@ export class BooksService {
     return books;
   }
 
-  async getBookDetail(bookId: number) {
+  async getBookDetail(bookId: number): Promise<BookModel> {
     const foundBook = await this.bookRepository.findOne({
       where: { id: bookId },
       relations: {

@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { postOrderDto } from 'src/dtos/order.dto';
 import { OrderModel } from 'src/entities/order.entity';
-import { QueryRunner, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { OrderDetailsService } from './order-details.service';
 import { CartsService } from './carts.service';
 import { DeliveryService } from './delivery.service';
@@ -20,9 +20,7 @@ export class OrdersService {
 
   async findOrderOneById(orderId: number): Promise<OrderModel> {
     const foundOrder = await this.orderRepository.findOne({
-      where: {
-        id: orderId,
-      },
+      where: { id: orderId },
       relations: {
         delivery: true,
         order_details: true,
@@ -67,9 +65,7 @@ export class OrdersService {
   getOrders(userId: number): Promise<OrderModel[]> {
     return this.orderRepository.find({
       where: {
-        user: {
-          id: userId,
-        },
+        user: { id: userId },
       },
       relations: {
         delivery: true,
