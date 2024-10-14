@@ -16,6 +16,7 @@ import { typeormConfig } from './config/typeorm.config';
 import { envJoiSchema } from './config/env-joi-schema';
 import { addTransactionalDataSource } from 'typeorm-transactional';
 import { DataSource } from 'typeorm';
+import { S3Module } from './modules/s3.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { DataSource } from 'typeorm';
     OrdersModule,
     OrderDetailsModule,
     DeliveryModule,
+    S3Module,
   ],
   providers: [{ provide: APP_INTERCEPTOR, useClass: LoggingInterceptor }],
 })
