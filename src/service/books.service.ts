@@ -2,7 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Between, FindOptionsWhere, Repository } from 'typeorm';
 import { BookModel } from 'src/entities/book.entity';
-import { CategoryModel } from 'src/entities/category.entity';
 import { BookPaginationOptDto } from 'src/dtos/pagination-req.dto';
 import { dateCalculate } from 'src/util/date-calculate';
 
@@ -11,8 +10,6 @@ export class BooksService {
   constructor(
     @InjectRepository(BookModel)
     private readonly bookRepository: Repository<BookModel>,
-    @InjectRepository(CategoryModel)
-    private readonly categoryRepository: Repository<CategoryModel>,
   ) {}
 
   async getBooks(dto: BookPaginationOptDto): Promise<BookModel[]> {
