@@ -39,7 +39,7 @@ export class BookModel {
   @Column()
   pages: number;
 
-  @Column('simple-array', { default: [] })
+  @Column('simple-array')
   indexList: string[];
 
   @Column()
