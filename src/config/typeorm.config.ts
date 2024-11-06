@@ -13,7 +13,7 @@ export const typeormConfig = (
     password: configService.get<string>('DB_PASSWORD'),
     database: configService.get<string>('DB_NAME'),
     autoLoadEntities: true,
-    synchronize: false,
+    synchronize: configService.get<string>('NODE_ENV') === 'test',
     logging: configService.get<string>('NODE_ENv') !== 'prod',
   };
 };

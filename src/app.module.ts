@@ -23,6 +23,7 @@ import { S3Module } from './modules/s3.module';
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: envJoiSchema,
+      envFilePath: process.env.NODE_ENV === 'test' ? 'test.env' : '.env',
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],

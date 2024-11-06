@@ -1,7 +1,7 @@
 import * as joi from 'joi';
 
 export const envJoiSchema = joi.object({
-  NODE_ENV: joi.string().empty('').valid('dev', 'prod').default('dev'),
+  NODE_ENV: joi.string().empty('').valid('test', 'dev', 'prod').default('dev'),
   PORT: joi.number().empty('').default(3000),
   HASH_ROUND: joi.number().empty('').required(),
   SWAGGER_PW: joi.string().empty('').required(),
