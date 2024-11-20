@@ -20,6 +20,7 @@
     "test:integration": "jest --testRegex='.*\\integration.spec\\.ts$'",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "typeorm-ts-node-commonjs",
+    "seed": "ts-node -r tsconfig-paths/register ./node_modules/typeorm-extension/bin/cli.cjs seed:run -d ./src/db/datasource.ts",
     "migration:create": "npm run typeorm -- migration:create ./src/db/migrations/schema-update",
     "migration:generate": "npm run typeorm -- migration:generate ./src/db/migrations/schema-update -d ./src/db/datasource.ts",
     "migration:show": "npm run typeorm -- migration:show -d ./dist/db/datasource.js",
@@ -54,6 +55,7 @@
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
     "typeorm": "^0.3.20",
+    "typeorm-extension": "^3.6.3",
     "typeorm-transactional": "^0.5.0"
   },
   "devDependencies": {
