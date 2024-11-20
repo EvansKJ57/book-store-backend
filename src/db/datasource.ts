@@ -1,11 +1,12 @@
 import * as dotenv from 'dotenv';
-import { DataSource } from 'typeorm';
+import { DataSource, DataSourceOptions } from 'typeorm';
+import { SeederOptions } from 'typeorm-extension';
 
 dotenv.config();
 
 const isProduction = process.env.NODE_ENV === 'prod';
 
-export default new DataSource({
+const databaseOptions: DataSourceOptions & SeederOptions = {
   type: 'postgres',
   host: process.env.DB_HOST || 'localhost',
   port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5432,
@@ -19,4 +20,7 @@ export default new DataSource({
     isProduction ? 'dist/db/migrations/**/*.js' : 'src/db/migrations/**/*.ts',
   ],
   migrationsTableName: 'migration',
-});
+  seeds: ['src/db/seeds/**/*.seeder.ts'],
+};
+
+export default new DataSource(databaseOptions);
